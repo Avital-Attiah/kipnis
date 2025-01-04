@@ -1,29 +1,47 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { userNameExist } from "../db-api";
+import { UserContext } from "../UserContext";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [error, setError] = useState("");
-
+  const { setUserData } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    
-      // הוספת משתמש חדש
-      const newUser = { username, website: password };
-      await fetch("http://localhost:3001/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
+    setError(""); // Reset any previous error messages
 
-      localStorage.setItem("user", JSON.stringify(newUser));
-      navigate("/home");
-    };
+    if (username.length < 3 || username.length > 20) {
+      setError("השם משתמש חייב להיות בין 3 ל-20 תווים");
+      return;
+    }
+
+    if (password !== verifyPassword) {
+      setError("הסיסמאות אינן תואמות");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("הסיסמה חייבת להיות לפחות 6 תווים");
+      return;
+    }
+
+    const existuserName = await userNameExist(username,setError); // Check if user exists
+
+    if (existuserName) {
+      setError("המשתמש כבר קיים");
+      return;
+    }
+
+    // Save the user data to context
+    setUserData({ username, password });
+    navigate("/fullInfo"); // Navigate to full info page
+  };
 
   const handleLogInClick = () => {
     navigate("/login");
@@ -52,11 +70,12 @@ const Register = () => {
           onChange={(e) => setVerifyPassword(e.target.value)}
         />
         <button type="submit">רשום</button>
-        <button onClick={handleLogInClick}>התחבר</button>``
-     </form>
+        <button type="button" onClick={handleLogInClick}>התחבר</button>
+      </form>
+
+      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
     </div>
   );
 };
-
 
 export default Register;

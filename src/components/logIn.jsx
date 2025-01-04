@@ -12,7 +12,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // קריאה לפונקציה עם העברת navigate ו-setError כפרמטרים
-    await userExist(username, password, setError, navigate);
+    var existUser=await userExist(username, password, setError);
+    if (existUser){
+      localStorage.setItem("user", JSON.stringify(existUser));
+      navigate("/home");
+    }
+    else{
+      setError("שם משתמש או סיסמה שגויים!");
+     } 
+    
   };
 
   const handleRegisterClick = () => {
