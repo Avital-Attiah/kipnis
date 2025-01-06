@@ -33,7 +33,7 @@ const Register = () => {
 
     const existuserName = await userNameExist(username,setError); // Check if user exists
 
-    if (existuserName) {
+    if (!existuserName) {
       setError("המשתמש כבר קיים");
       return;
     }

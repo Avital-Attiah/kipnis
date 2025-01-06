@@ -35,9 +35,9 @@ export async function userNameExist(userName,  setError) {
        
 
         if (res.ok && user && Object.keys(user).length > 0) {
-          return ture;
+          return user;
         } else {
-            return false;
+            return null;
         }
     } catch (err) {
         console.error("Error fetching users", err);

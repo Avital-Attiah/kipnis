@@ -4,6 +4,7 @@ import Register from "./components/register";
 import FullInfo from "./components/fullInfo";
 import Home from "./components/home";
 import Todos from "./components/todos";
+import Albums from "./components/albums";
 import { UserContextProvider } from "./UserContext"; // Correctly import UserContextProvider
 
 function App() {
@@ -19,9 +20,10 @@ function App() {
 
         {/* דף המטלות */}
         <Route path="/todos" element={<Todos />} />
-
+        
         {/* דף הבית לא מקבל את /todos כחלק ממנו */}
         <Route path="/home" element={<Home />} />
+        <Route path="albums" element={<Albums />} />
       </Routes>
     </BrowserRouter>
   </UserContextProvider>

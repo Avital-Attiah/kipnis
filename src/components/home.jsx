@@ -5,14 +5,36 @@ const Home = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+ /*  useEffect(() => {
+    console.log("useEffect ran");
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
       navigate("/login");
     } else {
       setUser(JSON.parse(storedUser));
     }
+  }, [navigate]); */
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (Array.isArray(parsedUser) && parsedUser.length > 0 && parsedUser[0].username) {
+          setUser(parsedUser[0]); // שליפת האובייקט הראשון מתוך המערך
+        } else {
+          console.error("User array is empty or missing username");
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to parse user from localStorage:", error);
+        setUser(null);
+      }
+    } else {
+      navigate("/login");
+    }
   }, [navigate]);
+  
 
   const handleLogout = () => {
     localStorage.removeItem("user");
