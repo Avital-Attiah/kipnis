@@ -6,6 +6,7 @@ import Home from "./components/home";
 import Todos from "./components/todos";
 import Albums from "./components/albums";
 import { UserContextProvider } from "./UserContext"; // Correctly import UserContextProvider
+import Posts from "./components/posts";
 
 function App() {
   return (<UserContextProvider>
@@ -17,7 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/fullinfo" element={<FullInfo />} />
-
+        <Route path="/posts" element={<Posts />} />
         {/* דף המטלות */}
         <Route path="/todos" element={<Todos />} />
         
