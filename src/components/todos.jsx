@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../style/todoStyle.css';
 
 const initialState = {
   todos: [],
@@ -46,19 +47,18 @@ const Todos = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showForm, setShowForm] = useState(false);
   const [newTodo, setNewTodo] = useState({
-    userId: 1, // ת"ז של המשתמש המחובר (לדוגמה, 1)
+    userId: 1,
     id: '',
     title: '',
     completed: false,
   });
   const [sortCriteria, setSortCriteria] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isEditing, setIsEditing] = useState(false); // מצב עריכה
-  const [editingTodo, setEditingTodo] = useState(null); // המטלה בעריכה
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
   const navigate = useNavigate();
-  const userId = 1; // ת"ז של המשתמש המחובר
+  const userId = 1;
 
-  // שליפת המטלות מהשרת
   useEffect(() => {
     fetch(`http://localhost:3001/todos?userId=${userId}`)
       .then((response) => response.json())
@@ -70,16 +70,14 @@ const Todos = () => {
       });
   }, [userId]);
 
-  // עדכון שדות בטופס
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTodo({ ...newTodo, [name]: value });
   };
 
-  // הוספת מטלה חדשה
   const handleAddTodo = () => {
     if (newTodo.title) {
-      const newId = state.todos.length + 1; // כמות המטלות הנוכחיות + 1
+      const newId = state.todos.length + 1;
       const todoToAdd = { ...newTodo, id: newId };
 
       fetch('http://localhost:3001/todos', {
@@ -92,8 +90,8 @@ const Todos = () => {
         .then((response) => response.json())
         .then((data) => {
           dispatch({ type: 'ADD_TODO', payload: data });
-          setShowForm(false); // סגירת הטופס אחרי הוספה
-          setNewTodo({ userId: 1, id: '', title: '', completed: false }); // ניקוי הטופס
+          setShowForm(false);
+          setNewTodo({ userId: 1, id: '', title: '', completed: false });
         })
         .catch((error) => {
           alert('הייתה שגיאה בהוספת המטלה');
@@ -104,7 +102,6 @@ const Todos = () => {
     }
   };
 
-  // עדכון מצב המטלה (אם היא בוצעה או לא)
   const handleCompleteTodo = (todo) => {
     const updatedTodo = { ...todo, completed: !todo.completed };
 
@@ -124,7 +121,6 @@ const Todos = () => {
       });
   };
 
-  // מחיקת מטלה
   const handleDeleteTodo = (id) => {
     fetch(`http://localhost:3001/todos/${id}`, {
       method: 'DELETE',
@@ -137,7 +133,6 @@ const Todos = () => {
       });
   };
 
-  // סינון לפי קריטריון חיפוש
   const handleSearch = () => {
     let filteredTodos = state.todos;
 
@@ -152,7 +147,6 @@ const Todos = () => {
     dispatch({ type: 'SET_FILTERED_TODOS', payload: filteredTodos });
   };
 
-  // מיון לפי קריטריון
   const handleSort = (criteria) => {
     let sortedTodos = [...state.filteredTodos];
 
@@ -176,13 +170,11 @@ const Todos = () => {
     dispatch({ type: 'SET_FILTERED_TODOS', payload: sortedTodos });
   };
 
-  // התחלת עריכת מטלה
   const handleEditTodo = (todo) => {
     setIsEditing(true);
     setEditingTodo(todo);
   };
 
-  // עדכון כותרת של מטלה
   const handleUpdateTodo = () => {
     const updatedTodo = { ...editingTodo };
 
@@ -205,22 +197,23 @@ const Todos = () => {
   };
 
   return (
-    <div>
-      <h1>Todos</h1>
-      <button onClick={() => navigate('/home')}>יציאה</button>
-      <button onClick={() => setShowForm(!showForm)}>הוסף מטלה חדשה</button>
+    <div className="todos-container">
+      <h1 className="todos-header">Todos</h1>
+      <button className="exit-btn" onClick={() => navigate('/home')}>יציאה</button>
+      <button className="add-todo-btn" onClick={() => setShowForm(!showForm)}>הוסף מטלה חדשה</button>
 
-      {/* אפשרויות חיפוש */}
-      <input
-        type="text"
-        placeholder="חיפוש לפי כותרת, מספר מזהה או מצב ביצוע"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      <button onClick={handleSearch}>חפש</button>
+      <div className="search-container">
+        <input
+          className="search-input"
+          type="text"
+          placeholder="חיפוש לפי כותרת, מספר מזהה או מצב ביצוע"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button className="search-btn" onClick={handleSearch}>חפש</button>
+      </div>
 
-      {/* אפשרויות מיון */}
-      <select onChange={(e) => handleSort(e.target.value)}>
+      <select className="sort-select" onChange={(e) => handleSort(e.target.value)}>
         <option value="">מיין לפי</option>
         <option value="id">מספר מזהה</option>
         <option value="title">כותרת</option>
@@ -229,45 +222,46 @@ const Todos = () => {
       </select>
 
       {showForm && (
-        <div>
+        <div className="add-todo-form">
           <h3>הוסף מטלה חדשה</h3>
           <input
+            className="todo-input"
             type="text"
             name="title"
             placeholder="Title"
             value={newTodo.title}
             onChange={handleInputChange}
           />
-          <button onClick={handleAddTodo}>שמור</button>
+          <button className="save-btn" onClick={handleAddTodo}>שמור</button>
         </div>
       )}
 
-      {/* עדכון כותרת מטלה */}
       {isEditing && (
-        <div>
+        <div className="edit-todo-form">
           <h3>ערוך כותרת מטלה</h3>
           <input
+            className="todo-input"
             type="text"
             value={editingTodo.title}
             onChange={(e) => setEditingTodo({ ...editingTodo, title: e.target.value })}
           />
-          <button onClick={handleUpdateTodo}>עדכן</button>
-          <button onClick={() => setIsEditing(false)}>בטל</button>
+          <button className="update-btn" onClick={handleUpdateTodo}>עדכן</button>
+          <button className="cancel-btn" onClick={() => setIsEditing(false)}>בטל</button>
         </div>
       )}
 
-      {/* הצגת המטלות */}
-      <ul>
+      <ul className="todo-list">
         {state.filteredTodos.map((todo) => (
-          <li key={todo.id}>
+          <li key={todo.id} className="todo-item">
             {todo.id}. {todo.title} - {todo.completed ? '✔' : 'לא בוצע'}
             <input
+              className="todo-checkbox"
               type="checkbox"
               checked={todo.completed}
               onChange={() => handleCompleteTodo(todo)}
             />
-            <button onClick={() => handleDeleteTodo(todo.id)}>מחק</button>
-            <button onClick={() => handleEditTodo(todo)}>ערוך</button>
+            <button className="delete-btn" onClick={() => handleDeleteTodo(todo.id)}>מחק</button>
+            <button className="edit-btn" onClick={() => handleEditTodo(todo)}>ערוך</button>
           </li>
         ))}
       </ul>

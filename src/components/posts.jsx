@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from "react";
+import '../style/postStyle.css';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]); // פוסטים מסוננים
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
   const [newPost, setNewPost] = useState({ title: "", body: "" });
   const [newComment, setNewComment] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); // שדה לחיפוש
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [otherUsersPosts, setOtherUsersPosts] = useState([]);
+  const [otherPostsPage, setOtherPostsPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const currentUser =
     Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
 
-  // הבאת פוסטים מהשרת
   useEffect(() => {
     if (currentUser && currentUser.id) {
       fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
@@ -25,13 +29,12 @@ const Posts = () => {
         })
         .then((data) => {
           setPosts(data);
-          setFilteredPosts(data); // עדכון הפוסטים המסוננים
+          setFilteredPosts(data);
         })
         .catch((err) => console.error("Error fetching posts", err));
     }
   }, [currentUser]);
 
-  // סינון הפוסטים בהתבסס על חיפוש
   useEffect(() => {
     const filtered = posts.filter(
       (post) =>
@@ -39,6 +42,23 @@ const Posts = () => {
     );
     setFilteredPosts(filtered);
   }, [searchTerm, posts]);
+
+  const loadOtherUsersPosts = () => {
+    setLoadingMore(true);
+    fetch(
+      `http://localhost:3001/posts?userId_ne=${currentUser.id}&_page=${otherPostsPage}&_limit=5`
+    )
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch other users' posts");
+        return res.json();
+      })
+      .then((data) => {
+        setOtherUsersPosts((prevPosts) => [...prevPosts, ...data]);
+        setOtherPostsPage((prevPage) => prevPage + 1);
+      })
+      .catch((err) => console.error("Error fetching other users' posts", err))
+      .finally(() => setLoadingMore(false));
+  };
 
   const handleSelectPost = (post) => {
     setSelectedPost(post);
@@ -121,82 +141,19 @@ const Posts = () => {
   };
 
   return (
-    <div>
-      <h1>פוסטים</h1>
-      <div>
-        <h2>חיפוש פוסטים</h2>
+    <div className="container">
+      {/* תיבת חיפוש */}
+      <div className="search-bar">
         <input
           type="text"
-          placeholder="חפש לפי מזהה או כותרת"
+          placeholder="חפש פוסט לפי כותרת או מזהה"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      <div>
-        <h2>רשימת פוסטים</h2>
-        <ul>
-          {filteredPosts.map((post) => (
-            <li key={post.id}>
-              <button onClick={() => handleSelectPost(post)}>
-                {post.id}: {post.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      {selectedPost && (
-        <div>
-          <h2>פרטי פוסט</h2>
-          {editMode ? (
-            <>
-              <label>כותרת:</label>
-              <input
-                type="text"
-                value={selectedPost.title}
-                onChange={(e) =>
-                  setSelectedPost({ ...selectedPost, title: e.target.value })
-                }
-              />
-              <label>תוכן:</label>
-              <textarea
-                value={selectedPost.body}
-                onChange={(e) =>
-                  setSelectedPost({ ...selectedPost, body: e.target.value })
-                }
-              />
-              <button onClick={() => handleUpdatePost(selectedPost.id)}>
-                אישור
-              </button>
-              <button onClick={() => setEditMode(false)}>ביטול</button>
-            </>
-          ) : (
-            <>
-              <p>כותרת: {selectedPost.title}</p>
-              <p>תוכן: {selectedPost.body}</p>
-              <button onClick={() => setEditMode(true)}>שינוי</button>
-            </>
-          )}
-          <button onClick={() => handleDeletePost(selectedPost.id)}>
-            מחק פוסט
-          </button>
-          <h3>תגובות</h3>
-          <ul>
-            {comments.map((comment) => (
-              <li key={comment.id}>
-                <strong>{comment.name}</strong>: {comment.body}
-              </li>
-            ))}
-          </ul>
-          <input
-            type="text"
-            placeholder="תגובה חדשה"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button onClick={handleAddComment}>הוסף תגובה</button>
-        </div>
-      )}
-      <div>
+  
+      {/* כפתור להוספת פוסט */}
+      <div className="add-post">
         <h2>הוסף פוסט חדש</h2>
         <input
           type="text"
@@ -211,8 +168,70 @@ const Posts = () => {
         />
         <button onClick={handleAddPost}>הוסף פוסט</button>
       </div>
+  
+      {/* רשימת הפוסטים שלי */}
+      <div className="my-posts">
+        <h2>הפוסטים שלי</h2>
+        <ul>
+          {filteredPosts.map((post) => (
+            <li key={post.id}>
+              <button onClick={() => handleSelectPost(post)}>
+                {post.id}: {post.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+  
+      {/* רשימת הפוסטים של אחרים */}
+      <div className="other-posts">
+        <h2>פוסטים של משתמשים אחרים</h2>
+        <button onClick={loadOtherUsersPosts}>
+          {loadingMore ? "טוען..." : "טען עוד פוסטים"}
+        </button>
+        <ul>
+          {otherUsersPosts.map((post) => (
+            <li key={post.id}>
+              <button onClick={() => handleSelectPost(post)}>
+                {post.id}: {post.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+  
+      {/* פרטי פוסט */}
+      {selectedPost && (
+        <div className="post-details">
+          <h2>פרטי פוסט</h2>
+          <p><strong>כותרת:</strong> {selectedPost.title}</p>
+          <p><strong>תוכן:</strong> {selectedPost.body}</p>
+          <h3>תגובות</h3>
+          <ul>
+            {comments.map((comment) => (
+              <li key={comment.id}>
+                <strong>{comment.name}</strong>: {comment.body}
+                {comment.name === currentUser.username && (
+                  <>
+                    <button onClick={() => handleDeleteComment(comment.id)}>מחק</button>
+                    <button onClick={() => handleEditComment(comment)}>ערוך</button>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+          <input
+            type="text"
+            placeholder="תגובה חדשה"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <button onClick={handleAddComment}>הוסף תגובה</button>
+        </div>
+      )}
     </div>
   );
+  
 };
 
 export default Posts;
