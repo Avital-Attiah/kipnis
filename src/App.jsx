@@ -7,6 +7,7 @@ import Todos from "./components/todos";
 import Albums from "./components/albums";
 import { UserContextProvider } from "./UserContext"; // Correctly import UserContextProvider
 import Posts from "./components/posts";
+import OtherPosts from "./components/otherPosts";
 
 function App() {
   return (<UserContextProvider>
@@ -25,6 +26,8 @@ function App() {
         {/* דף הבית לא מקבל את /todos כחלק ממנו */}
         <Route path="/home" element={<Home />} />
         <Route path="albums" element={<Albums />} />
+        <Route path="otherPosts" element={<OtherPosts />} />
+
       </Routes>
     </BrowserRouter>
   </UserContextProvider>

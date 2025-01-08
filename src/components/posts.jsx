@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import '../style/postStyle.css';
+import Comments from "./comments"; // Import the Comments component
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [editMode, setEditMode] = useState(false);
-
   const [newPost, setNewPost] = useState({ title: "", body: "" });
-  const [newComment, setNewComment] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
-  const [otherUsersPosts, setOtherUsersPosts] = useState([]);
-  const [otherPostsPage, setOtherPostsPage] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const navigate = useNavigate();
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const currentUser =
@@ -23,10 +19,7 @@ const Posts = () => {
   useEffect(() => {
     if (currentUser && currentUser.id) {
       fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch posts");
-          return res.json();
-        })
+        .then((res) => res.ok ? res.json() : Promise.reject("Failed to fetch posts"))
         .then((data) => {
           setPosts(data);
           setFilteredPosts(data);
@@ -43,33 +36,8 @@ const Posts = () => {
     setFilteredPosts(filtered);
   }, [searchTerm, posts]);
 
-  const loadOtherUsersPosts = () => {
-    setLoadingMore(true);
-    fetch(
-      `http://localhost:3001/posts?userId_ne=${currentUser.id}&_page=${otherPostsPage}&_limit=5`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch other users' posts");
-        return res.json();
-      })
-      .then((data) => {
-        setOtherUsersPosts((prevPosts) => [...prevPosts, ...data]);
-        setOtherPostsPage((prevPage) => prevPage + 1);
-      })
-      .catch((err) => console.error("Error fetching other users' posts", err))
-      .finally(() => setLoadingMore(false));
-  };
-
   const handleSelectPost = (post) => {
     setSelectedPost(post);
-    setEditMode(false);
-    fetch(`http://localhost:3001/comments?postId=${post.id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch comments");
-        return res.json();
-      })
-      .then((data) => setComments(data))
-      .catch((err) => console.error("Error fetching comments", err));
   };
 
   const handleAddPost = () => {
@@ -79,10 +47,7 @@ const Posts = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(post),
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to add post");
-        return res.json();
-      })
+      .then((res) => res.ok ? res.json() : Promise.reject("Failed to add post"))
       .then((data) => {
         setPosts([...posts, data]);
         setFilteredPosts([...posts, data]);
@@ -91,54 +56,36 @@ const Posts = () => {
     setNewPost({ title: "", body: "" });
   };
 
-  const handleUpdatePost = (postId) => {
-    fetch(`http://localhost:3001/posts/${postId}`, {
+  const handleEditPost = () => {
+    const updatedPost = { ...selectedPost, title: newPost.title, body: newPost.body };
+    fetch(`http://localhost:3001/posts/${selectedPost.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(selectedPost),
+      body: JSON.stringify(updatedPost),
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update post");
-        return res.json();
+      .then((res) => res.ok ? res.json() : Promise.reject("Failed to update post"))
+      .then((updatedPostData) => {
+        setPosts(posts.map((post) => (post.id === updatedPostData.id ? updatedPostData : post)));
+        setFilteredPosts(filteredPosts.map((post) => (post.id === updatedPostData.id ? updatedPostData : post)));
+        setSelectedPost(updatedPostData);
+        setIsEditingPost(false);
       })
-      .then((updatedPost) =>
-        setPosts(posts.map((post) => (post.id === postId ? updatedPost : post)))
-      )
-      .catch((err) => console.error("Error updating post", err));
-    setEditMode(false);
+      .catch((err) => console.error("Error editing post", err));
   };
 
-  const handleDeletePost = (postId) => {
-    fetch(`http://localhost:3001/posts/${postId}`, { method: "DELETE" })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to delete post");
-        setPosts(posts.filter((post) => post.id !== postId));
-        setFilteredPosts(posts.filter((post) => post.id !== postId));
+  const handleDeletePost = () => {
+    fetch(`http://localhost:3001/posts/${selectedPost.id}`, { method: "DELETE" })
+      .then(() => {
+        setPosts(posts.filter((post) => post.id !== selectedPost.id));
+        setFilteredPosts(filteredPosts.filter((post) => post.id !== selectedPost.id));
         setSelectedPost(null);
       })
       .catch((err) => console.error("Error deleting post", err));
   };
 
-  const handleAddComment = () => {
-    const comment = {
-      postId: selectedPost.id,
-      name: currentUser.username,
-      email: currentUser.email || "user@example.com",
-      body: newComment,
-    };
-    fetch("http://localhost:3001/comments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(comment),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to add comment");
-        return res.json();
-      })
-      .then((data) => setComments([...comments, data]))
-      .catch((err) => console.error("Error adding comment", err));
-    setNewComment("");
-  };
+  const goToOtherPosts = () => {
+    navigate("./otherPosts");
+  }
 
   return (
     <div className="container">
@@ -151,7 +98,7 @@ const Posts = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-  
+
       {/* כפתור להוספת פוסט */}
       <div className="add-post">
         <h2>הוסף פוסט חדש</h2>
@@ -168,70 +115,55 @@ const Posts = () => {
         />
         <button onClick={handleAddPost}>הוסף פוסט</button>
       </div>
-  
+      <button onClick={goToOtherPosts}>פוסטים אחרים</button>
+
       {/* רשימת הפוסטים שלי */}
       <div className="my-posts">
         <h2>הפוסטים שלי</h2>
         <ul>
           {filteredPosts.map((post) => (
             <li key={post.id}>
-              <button onClick={() => handleSelectPost(post)}>
-                {post.id}: {post.title}
-              </button>
+              <button onClick={() => handleSelectPost(post)}>{post.id}: {post.title}</button>
+              {post.id === selectedPost?.id && (
+                <div>
+                  <button onClick={() => setIsEditingPost(true)}>ערוך</button>
+                  <button onClick={handleDeletePost}>מחק</button>
+                </div>
+              )}
             </li>
           ))}
         </ul>
       </div>
-  
-      {/* רשימת הפוסטים של אחרים */}
-      <div className="other-posts">
-        <h2>פוסטים של משתמשים אחרים</h2>
-        <button onClick={loadOtherUsersPosts}>
-          {loadingMore ? "טוען..." : "טען עוד פוסטים"}
-        </button>
-        <ul>
-          {otherUsersPosts.map((post) => (
-            <li key={post.id}>
-              <button onClick={() => handleSelectPost(post)}>
-                {post.id}: {post.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-  
+
       {/* פרטי פוסט */}
       {selectedPost && (
         <div className="post-details">
           <h2>פרטי פוסט</h2>
-          <p><strong>כותרת:</strong> {selectedPost.title}</p>
-          <p><strong>תוכן:</strong> {selectedPost.body}</p>
-          <h3>תגובות</h3>
-          <ul>
-            {comments.map((comment) => (
-              <li key={comment.id}>
-                <strong>{comment.name}</strong>: {comment.body}
-                {comment.name === currentUser.username && (
-                  <>
-                    <button onClick={() => handleDeleteComment(comment.id)}>מחק</button>
-                    <button onClick={() => handleEditComment(comment)}>ערוך</button>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-          <input
-            type="text"
-            placeholder="תגובה חדשה"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button onClick={handleAddComment}>הוסף תגובה</button>
+          {isEditingPost ? (
+            <>
+              <input
+                type="text"
+                value={newPost.title}
+                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+              />
+              <textarea
+                value={newPost.body}
+                onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
+              />
+              <button onClick={handleEditPost}>שמור שינויים</button>
+              <button onClick={() => setIsEditingPost(false)}>בטל עריכה</button>
+            </>
+          ) : (
+            <>
+              <p><strong>כותרת:</strong> {selectedPost.title}</p>
+              <p><strong>תוכן:</strong> {selectedPost.body}</p>
+              <Comments postId={selectedPost.id} currentUser={currentUser} />
+            </>
+          )}
         </div>
       )}
     </div>
   );
-  
 };
 
 export default Posts;
