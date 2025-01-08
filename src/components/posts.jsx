@@ -3,7 +3,7 @@ import '../style/postStyle.css';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
+
   const [selectedPost, setSelectedPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -20,28 +20,29 @@ const Posts = () => {
   const currentUser =
     Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
 
-  useEffect(() => {
-    if (currentUser && currentUser.id) {
-      fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch posts");
-          return res.json();
-        })
-        .then((data) => {
-          setPosts(data);
-          setFilteredPosts(data);
-        })
-        .catch((err) => console.error("Error fetching posts", err));
-    }
-  }, [currentUser]);
 
   useEffect(() => {
-    const filtered = posts.filter(
-      (post) =>
-        post.title.includes(searchTerm) || post.id.toString().includes(searchTerm)
-    );
-    setFilteredPosts(filtered);
-  }, [searchTerm, posts]);
+    if (searchTerm === "") {
+      if (currentUser && currentUser.id) {
+        fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch posts");
+            return res.json();
+          })
+          .then((data) => {
+            setPosts(data); // טען את כל הפוסטים מחדש
+          })
+          .catch((err) => console.error("Error fetching posts", err));
+      }
+    } else {
+      const filtered = posts.filter(
+        (post) =>
+          post.title.includes(searchTerm) || post.id.toString().includes(searchTerm)
+      );
+      setPosts(filtered);
+    }
+  }, [searchTerm, currentUser]);
+  
 
   const loadOtherUsersPosts = () => {
     setLoadingMore(true);
@@ -85,7 +86,7 @@ const Posts = () => {
       })
       .then((data) => {
         setPosts([...posts, data]);
-        setFilteredPosts([...posts, data]);
+    
       })
       .catch((err) => console.error("Error adding post", err));
     setNewPost({ title: "", body: "" });
@@ -113,7 +114,7 @@ const Posts = () => {
       .then((res) => {
         if (!res.ok) throw new Error("Failed to delete post");
         setPosts(posts.filter((post) => post.id !== postId));
-        setFilteredPosts(posts.filter((post) => post.id !== postId));
+    
         setSelectedPost(null);
       })
       .catch((err) => console.error("Error deleting post", err));
@@ -173,7 +174,7 @@ const Posts = () => {
       <div className="my-posts">
         <h2>הפוסטים שלי</h2>
         <ul>
-          {filteredPosts.map((post) => (
+          {posts.map((post) => (
             <li key={post.id}>
               <button onClick={() => handleSelectPost(post)}>
                 {post.id}: {post.title}

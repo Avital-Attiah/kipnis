@@ -5,6 +5,7 @@ import FullInfo from "./components/fullInfo";
 import Home from "./components/home";
 import Todos from "./components/todos";
 import Albums from "./components/albums";
+import Info from "./components/Info";
 import { UserContextProvider } from "./UserContext"; // Correctly import UserContextProvider
 import Posts from "./components/posts";
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/fullinfo" element={<FullInfo />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/info" element={<Info />} />
         {/* דף המטלות */}
         <Route path="/todos" element={<Todos />} />
         

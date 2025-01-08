@@ -1,68 +1,55 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const Albums = () => {
-  const [albums, setAlbums] = useState([]); // רשימת כל האלבומים
-  const [filteredAlbums, setFilteredAlbums] = useState([]); // רשימת האלבומים המסוננת
-  const [search, setSearch] = useState(""); // ערך החיפוש
-  const [selectedAlbum, setSelectedAlbum] = useState(null); // אלבום שנבחר
-  const [photos, setPhotos] = useState([]); // רשימת התמונות באלבום שנבחר
-  const [photosPage, setPhotosPage] = useState(1); // עמוד התמונות הנוכחי באלבום שנבחר
-
+  const [albums, setAlbums] = useState([]); // כל האלבומים
+  const [searchTerm, setSearchTerm] = useState(""); // ערך החיפוש
+  const [selectedAlbum, setSelectedAlbum] = useState(null); // האלבום שנבחר
+  const [photos, setPhotos] = useState([]); // רשימת תמונות באלבום שנבחר
+  const [photosPage, setPhotosPage] = useState(1); // עמוד התמונות הנוכחי
+  
   // משתמש פעיל
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId = Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0].id : null;
-  
 
-  // הבאת האלבומים של המשתמש הפעיל
+  // טוען את האלבומים מהשרת
   useEffect(() => {
-    const fetchUserAlbums = async () => {
-      try {
-        const res = await fetch(`http://localhost:3001/albums?userId=${userId}`);
-        const data = await res.json();
-        setAlbums(data); // שמירת כל האלבומים
-        setFilteredAlbums(data); // אתחול רשימת האלבומים המסוננת
-      } catch (err) {
-        console.error("Error fetching albums:", err);
-      }
-    };
-
     if (userId) {
-      fetchUserAlbums();
+      fetch(`http://localhost:3001/albums?userId=${userId}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch albums");
+          return res.json();
+        })
+        .then((data) => setAlbums(data))
+        .catch((err) => console.error("Error fetching albums:", err));
     }
   }, [userId]);
 
-  // חיפוש באלבומים
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setFilteredAlbums(
-      albums.filter(
+  // סינון האלבומים לפי ערך החיפוש
+  const filteredAlbums = searchTerm
+    ? albums.filter(
         (album) =>
-          album.title.toLowerCase().includes(e.target.value.toLowerCase()) ||
-          album.id.toString().includes(e.target.value)
+          album.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          album.id.toString().includes(searchTerm)
       )
-    );
-  };
+    : albums;
 
-  // הצגת פרטי אלבום עם רשימת תמונות
-  const handleAlbumClick = async (albumId) => {
+  // בחירת אלבום להצגת התמונות
+  const handleAlbumClick = (albumId) => {
     setSelectedAlbum(albumId);
     setPhotos([]);
     setPhotosPage(1);
-    await fetchPhotos(albumId, 1);
+    fetchPhotos(albumId, 1);
   };
 
-  // הבאת תמונות לפי עמוד
-  const fetchPhotos = async (albumId, page) => {
-    try {
-      const res = await fetch(`http://localhost:3001/photos?albumId=${albumId}&_page=${page}&_limit=10`);
-      const data = await res.json();
-      setPhotos((prevPhotos) => [...prevPhotos, ...data]);
-    } catch (err) {
-      console.error("Error fetching photos:", err);
-    }
+  // הבאת תמונות של האלבום שנבחר לפי עמוד
+  const fetchPhotos = (albumId, page) => {
+    fetch(`http://localhost:3001/photos?albumId=${albumId}&_page=${page}&_limit=10`)
+      .then((res) => res.json())
+      .then((data) => setPhotos((prev) => [...prev, ...data]))
+      .catch((err) => console.error("Error fetching photos:", err));
   };
 
-  // טעינת תמונות נוספות
+  // טעינת עמוד תמונות נוסף
   const loadMorePhotos = () => {
     const nextPage = photosPage + 1;
     setPhotosPage(nextPage);
@@ -72,14 +59,16 @@ const Albums = () => {
   return (
     <div>
       <h1>אלבומים</h1>
-
-      {/* שדה חיפוש */}
-      <input
-        type="text"
-        placeholder="חפש לפי מזהה או שם אלבום"
-        value={search}
-        onChange={handleSearch}
-      />
+      
+      {/* הצגת תיבת החיפוש אם לא נבחר אלבום */}
+      {!selectedAlbum && (
+        <input
+          type="text"
+          placeholder="חפש לפי שם אלבום או מזהה"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      )}
 
       {/* רשימת האלבומים */}
       {!selectedAlbum && (
@@ -92,7 +81,7 @@ const Albums = () => {
         </ul>
       )}
 
-      {/* פרטי האלבום הנבחר */}
+      {/* הצגת פרטי אלבום שנבחר */}
       {selectedAlbum && (
         <div>
           <button onClick={() => setSelectedAlbum(null)}>חזור</button>
