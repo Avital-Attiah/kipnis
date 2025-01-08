@@ -5,15 +5,6 @@ const Home = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
- /*  useEffect(() => {
-    console.log("useEffect ran");
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      navigate("/login");
-    } else {
-      setUser(JSON.parse(storedUser));
-    }
-  }, [navigate]); */
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
