@@ -16,29 +16,28 @@ const Posts = () => {
   const currentUser =
     Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
 
+
   useEffect(() => {
-    if (currentUser && currentUser.id) {
-      fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
-        .then((res) => res.ok ? res.json() : Promise.reject("Failed to fetch posts"))
-        .then((data) => {
-          setPosts(data);
-          setFilteredPosts(data);
-        })
-        .catch((err) => console.error("Error fetching posts", err));
+    if (searchTerm === "") {
+      if (currentUser && currentUser.id) {
+        fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch posts");
+            return res.json();
+          })
+          .then((data) => {
+            setPosts(data); // טען את כל הפוסטים מחדש
+          })
+          .catch((err) => console.error("Error fetching posts", err));
+      }
+    } else {
+      const filtered = posts.filter(
+        (post) =>
+          post.title.includes(searchTerm) || post.id.toString().includes(searchTerm)
+      );
+      setPosts(filtered);
     }
-  }, [currentUser]);
-
-  useEffect(() => {
-    const filtered = posts.filter(
-      (post) =>
-        post.title.includes(searchTerm) || post.id.toString().includes(searchTerm)
-    );
-    setFilteredPosts(filtered);
-  }, [searchTerm, posts]);
-
-  const handleSelectPost = (post) => {
-    setSelectedPost(post);
-  };
+  }, [searchTerm]);
 
   const handleAddPost = () => {
     const post = { ...newPost, userId: currentUser.id };
