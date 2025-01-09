@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../style/postStyle.css';
-import Comments from "./comments"; // Import the Comments component
+import Comments from "./comments"; 
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -48,7 +48,7 @@ const Posts = () => {
       .then((res) => res.ok ? res.json() : Promise.reject("Failed to add post"))
       .then((data) => {
         setPosts([...posts, data]);
-    
+
       })
       .catch((err) => console.error("Error adding post", err));
     setNewPost({ title: "", body: "" });
@@ -64,12 +64,12 @@ const Posts = () => {
       .then((res) => res.ok ? res.json() : Promise.reject("Failed to update post"))
       .then((updatedPostData) => {
         setPosts(posts.map((post) => (post.id === updatedPostData.id ? updatedPostData : post)));
-        setFilteredPosts(filteredPosts.map((post) => (post.id === updatedPostData.id ? updatedPostData : post)));
         setSelectedPost(updatedPostData);
-        setIsEditingPost(false);
+        setIsEditingPost(false); // סיים את מצב העריכה לאחר עדכון הפוסט
       })
       .catch((err) => console.error("Error editing post", err));
   };
+  
 
   const handleDeletePost = () => {
     fetch(`http://localhost:3001/posts/${selectedPost.id}`, { method: "DELETE" })
@@ -79,6 +79,10 @@ const Posts = () => {
         setSelectedPost(null);
       })
       .catch((err) => console.error("Error deleting post", err));
+  };
+  const handleSelectPost = (post) => {
+    console.log("Selected post:", selectedPost);
+    setSelectedPost(post); // לבחור פוסט
   };
 
   const goToOtherPosts = () => {
@@ -141,11 +145,12 @@ const Posts = () => {
             <>
               <input
                 type="text"
-                value={newPost.title}
+                value={newPost.title || selectedPost?.title || ""}
+
                 onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
               />
               <textarea
-                value={newPost.body}
+                value={newPost.body || selectedPost?.body || ""}
                 onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
               />
               <button onClick={handleEditPost}>שמור שינויים</button>
@@ -156,6 +161,7 @@ const Posts = () => {
               <p><strong>כותרת:</strong> {selectedPost.title}</p>
               <p><strong>תוכן:</strong> {selectedPost.body}</p>
               <Comments postId={selectedPost.id} currentUser={currentUser} />
+              
             </>
           )}
         </div>

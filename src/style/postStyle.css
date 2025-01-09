@@ -1,114 +1,145 @@
-/* General Layout */
+/* container */
 .container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-}
-
-h2 {
+  font-family: 'Arial', sans-serif;
   color: #333;
-  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* מיישר את כל התוכן לשמאל */
 }
 
-/* Search Bar */
+/* search bar */
 .search-bar input {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
+  margin-top: 10%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
 }
 
-/* Add Post */
+/* add post section */
 .add-post {
-  background-color: #fff;
-  padding: 20px;
-  margin-bottom: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.add-post h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
 .add-post input,
 .add-post textarea {
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
 
 .add-post button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color:#2196F3;
   color: white;
+  padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .add-post button:hover {
-  background-color: #45a049;
+  background-color: #2196F3;
 }
 
-/* Post List */
+/* my posts section */
+.my-posts {
+  width: 100%;
+  max-width: 300px; /* הגבל את הרוחב של רשימת הפוסטים */
+  margin-right: 20px;
+}
+
+.my-posts h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
 .my-posts ul {
   list-style: none;
   padding: 0;
 }
 
 .my-posts li {
-  background-color: #fff;
-  padding: 15px;
   margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .my-posts button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .my-posts button:hover {
-  background-color: #0056b3;
+  background-color: #e5e5e5;
 }
 
-/* Post Details */
+/* post details */
 .post-details {
-  background-color: #fff;
+  position: fixed;
+  top: 10%;
+  right: 0; /* מיקום הצד הימני */
+  width: 30%;
+  background-color: #f9f9f9;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.post-details h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
 .post-details input,
 .post-details textarea {
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
 
 .post-details button {
-  padding: 10px 20px;
-  background-color: #f39c12;
+  background-color: #2196F3;
   color: white;
+  padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  margin-right: 10px;
 }
 
 .post-details button:hover {
-  background-color: #e67e22;
+  background-color: #2196F3;
+}
+
+/* edit and delete buttons */
+.post-details div button {
+  background-color: #f44336;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-details div button:hover {
+  background-color: #e53935;
 }

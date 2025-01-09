@@ -77,7 +77,7 @@ const OtherPosts = () => {
 
       {/* הצגת פרטי הפוסט הנבחר בצד ימין */}
       {selectedPost && (
-        <div className={`post-details ${selectedPost ? "open" : ""}`}>
+        <div className={`otherPost-details ${selectedPost ? "open" : ""}`}>
           <h3>{selectedPost.title}</h3>
           <p>{selectedPost.body}</p>
           {/* הצגת התגובות */}
