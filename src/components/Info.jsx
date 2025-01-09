@@ -34,8 +34,25 @@ const Info = () => {
         <li><strong>שם משתמש:</strong> {user.username}</li>
         <li><strong>אימייל:</strong> {user.email}</li>
         <li><strong>טלפון:</strong> {user.phone}</li>
-        <li><strong>כתובת:</strong> {user.address}</li>
-        <li><strong>חברה:</strong> {user.company}</li>
+        <li>
+          <strong>כתובת:</strong>
+          <ul>
+            <li><strong>רחוב:</strong> {user.address?.street}</li>
+            <li><strong>דירה:</strong> {user.address?.suite}</li>
+            <li><strong>עיר:</strong> {user.address?.city}</li>
+            <li><strong>מיקוד:</strong> {user.address?.zipcode}</li>
+            <li><strong>מיקום:</strong> {user.address?.geo ? `(${user.address.geo.lat}, ${user.address.geo.lng})` : "לא זמין"}</li>
+          </ul>
+        </li>
+        <li>
+          <strong>חברה:</strong>
+          <ul>
+            <li><strong>שם:</strong> {user.company?.name}</li>
+            <li><strong>סיסמא:</strong> {user.company?.catchPhrase}</li>
+            <li><strong>תחום:</strong> {user.company?.bs}</li>
+          </ul>
+        </li>
+        <li><strong>אתר:</strong> {user.website}</li>
       </ul>
     </div>
   );

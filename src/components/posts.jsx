@@ -5,7 +5,6 @@ import Comments from "./comments"; // Import the Comments component
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
-
   const [selectedPost, setSelectedPost] = useState(null);
   const [newPost, setNewPost] = useState({ title: "", body: "" });
   const [searchTerm, setSearchTerm] = useState("");

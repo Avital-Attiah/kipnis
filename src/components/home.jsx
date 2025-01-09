@@ -8,13 +8,19 @@ const Home = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+  
     if (storedUser) {
       try {
+        
         const parsedUser = JSON.parse(storedUser);
-        if (Array.isArray(parsedUser) && parsedUser.length > 0 && parsedUser[0].username) {
-          setUser(parsedUser[0]); // שליפת האובייקט הראשון מתוך המערך
+        
+  
+        if (Array.isArray(parsedUser) && parsedUser.length > 0) {
+          const lastUser = parsedUser[parsedUser.length - 1]; // משתמש אחרון במערך
+          setUser(lastUser);
+          console.log("User set successfully:", lastUser);
         } else {
-          console.error("User array is empty or missing username");
+          console.error("Parsed data is not an array or is empty:", parsedUser);
           setUser(null);
         }
       } catch (error) {
@@ -22,6 +28,7 @@ const Home = () => {
         setUser(null);
       }
     } else {
+      console.warn("No user found in localStorage. Redirecting to login.");
       navigate("/login");
     }
   }, [navigate]);
