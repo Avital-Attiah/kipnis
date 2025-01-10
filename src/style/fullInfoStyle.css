@@ -1,0 +1,84 @@
+/* container */
+.full-info-container {
+    width: 100%;
+    max-width: 1200px;  /* אם ברצונך להגדיר גבול לרוחב */
+    margin: 50px auto;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+  
+  /* title */
+  .full-info-title {
+    font-size: 2rem;
+    color: #444;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* form */
+  .full-info-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .full-info-input {
+    margin-bottom: 15px;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+  }
+  
+  .full-info-input:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  .full-info-button {
+    background-color: #007BFF;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+  }
+  
+  .full-info-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .full-info-button:active {
+    background-color: #004085;
+  }
+  
+  /* messages */
+  .full-info-success,
+  .full-info-error {
+    margin-top: 10px;
+    font-size: 1.1rem;
+  }
+  
+  .full-info-success {
+    color: green;
+  }
+  
+  .full-info-error {
+    color: red;
+  }
+  

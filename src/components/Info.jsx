@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import '../style/infoStyle.css';
 
 const Info = () => {
   const [user, setUser] = useState(null);
@@ -22,13 +23,13 @@ const Info = () => {
   }, []);
 
   if (!user) {
-    return <div>לא נמצא מידע על המשתמש.</div>;
+    return <div className="info-container">לא נמצא מידע על המשתמש.</div>;
   }
 
   return (
-    <div>
-      <h1>פרטי המשתמש</h1>
-      <ul>
+    <div className="info-container">
+      <h1 className="info-title">פרטי המשתמש</h1>
+      <ul className="info-list">
         <li><strong>מזהה:</strong> {user.id}</li>
         <li><strong>שם:</strong> {user.name}</li>
         <li><strong>שם משתמש:</strong> {user.username}</li>
@@ -36,7 +37,7 @@ const Info = () => {
         <li><strong>טלפון:</strong> {user.phone}</li>
         <li>
           <strong>כתובת:</strong>
-          <ul>
+          <ul className="info-sublist">
             <li><strong>רחוב:</strong> {user.address?.street}</li>
             <li><strong>דירה:</strong> {user.address?.suite}</li>
             <li><strong>עיר:</strong> {user.address?.city}</li>
@@ -46,7 +47,7 @@ const Info = () => {
         </li>
         <li>
           <strong>חברה:</strong>
-          <ul>
+          <ul className="info-sublist">
             <li><strong>שם:</strong> {user.company?.name}</li>
             <li><strong>סיסמא:</strong> {user.company?.catchPhrase}</li>
             <li><strong>תחום:</strong> {user.company?.bs}</li>

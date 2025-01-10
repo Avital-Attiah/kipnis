@@ -1,12 +1,13 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import '../style/fullInfoStyle.css'; // Import the CSS file
 
 function FullInfo() {
   const { userData } = useContext(UserContext);
   const [formData, setFormData] = useState({
     name: "",
-    username: userData.username, // Set initial value from context
+    username: userData.username,
     email: "",
     address: {
       street: "",
@@ -19,7 +20,7 @@ function FullInfo() {
       },
     },
     phone: "",
-    website: userData.password, // Set initial value from context
+    website: userData.password,
     company: {
       name: "",
       catchPhrase: "",
@@ -28,10 +29,9 @@ function FullInfo() {
   });
 
   const navigate = useNavigate();
-  const [error, setError] = useState(""); // For error messages
-  const [success, setSuccess] = useState(""); // For success messages
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -73,18 +73,14 @@ function FullInfo() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Reset messages
     setError("");
     setSuccess("");
-  
+
     try {
       console.log("Sending data:", formData);
-  
-      // שליחת הנתונים ל-JSON-Server
+
       const response = await fetch("http://localhost:3001/users", {
         method: "POST",
         headers: {
@@ -92,16 +88,14 @@ function FullInfo() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
-        const newUser = await response.json(); // קבלת הנתונים של המשתמש שנוסף
-  
-        // הוספת המשתמש ל-localStorage
+        const newUser = await response.json();
         const existingUsers = JSON.parse(localStorage.getItem("user")) || [];
         localStorage.setItem("user", JSON.stringify([...existingUsers, newUser]));
-  
+
         setSuccess("המשתמש נוסף בהצלחה!");
-        navigate("/home"); // או נתיב אחר לפי הצורך
+        navigate("/home");
       } else {
         throw new Error("שגיאה בהוספת המשתמש");
       }
@@ -109,18 +103,18 @@ function FullInfo() {
       setError("שגיאה בהתחברות לשרת: " + error.message);
     }
   };
-  
 
   return (
-    <div>
-      <h1>Full Information</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="full-info-container">
+      <h1 className="full-info-title">Full Information</h1>
+      <form onSubmit={handleSubmit} className="full-info-form">
         <input
           type="text"
           name="name"
           placeholder="Name"
           value={formData.name}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -129,6 +123,7 @@ function FullInfo() {
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -137,6 +132,7 @@ function FullInfo() {
           placeholder="Phone"
           value={formData.phone}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -145,6 +141,7 @@ function FullInfo() {
           placeholder="Street"
           value={formData.address.street}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -153,6 +150,7 @@ function FullInfo() {
           placeholder="Suite"
           value={formData.address.suite}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -161,6 +159,7 @@ function FullInfo() {
           placeholder="City"
           value={formData.address.city}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -169,6 +168,7 @@ function FullInfo() {
           placeholder="Zipcode"
           value={formData.address.zipcode}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -177,6 +177,7 @@ function FullInfo() {
           placeholder="Latitude"
           value={formData.address.geo.lat}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -185,6 +186,7 @@ function FullInfo() {
           placeholder="Longitude"
           value={formData.address.geo.lng}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -193,6 +195,7 @@ function FullInfo() {
           placeholder="Company Name"
           value={formData.company.name}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -201,6 +204,7 @@ function FullInfo() {
           placeholder="Catch Phrase"
           value={formData.company.catchPhrase}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
         <input
@@ -209,16 +213,16 @@ function FullInfo() {
           placeholder="Business Slogan"
           value={formData.company.bs}
           onChange={handleChange}
+          className="full-info-input"
           required
         />
-        <button type="submit" className="connect">
+        <button type="submit" className="full-info-button">
           Submit
         </button>
       </form>
 
-      {/* Messages */}
-      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
-      {success && <div style={{ color: "green", marginTop: "10px" }}>{success}</div>}
+      {error && <div className="full-info-error">{error}</div>}
+      {success && <div className="full-info-success">{success}</div>}
     </div>
   );
 }

@@ -1,0 +1,59 @@
+/* container */
+.info-container {
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align to the left for consistency */
+    direction: rtl; /* משנה את כיוון הכתיבה מימין לשמאל */
+    text-align: right; /* מציג את הטקסט מימין לשמאל */
+  }
+  
+  /* title */
+  .info-title {
+    font-size: 2rem; /* אחידות בגודל */
+    color: #f01111;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* list */
+  .info-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    font-size: 1rem; /* אחידות בגודל טקסט */
+    line-height: 1.6; /* רווח בין השורות לקריאות טובה יותר */
+  }
+  
+  .info-list li {
+    margin-bottom: 15px;
+  }
+  
+  .info-sublist {
+    list-style: none;
+    padding-left: 20px;
+    font-size: 1rem; /* אחידות בגודל טקסט */
+  }
+  
+  .info-sublist li {
+    margin-bottom: 8px;
+  }
+  
+  strong {
+    color: #007BFF;
+    font-weight: bold;
+  }
+  
+  /* styling for undefined or empty values */
+  .info-container .info-list li:empty {
+    display: none;
+  }
+  

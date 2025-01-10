@@ -1,61 +1,16 @@
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../style/todoStyle.css';
 
-const initialState = {
-  todos: [],
-  filteredTodos: [],
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'SET_TODOS':
-      return { ...state, todos: action.payload, filteredTodos: action.payload };
-    case 'ADD_TODO':
-      return {
-        ...state,
-        todos: [...state.todos, action.payload],
-        filteredTodos: [...state.todos, action.payload],
-      };
-    case 'UPDATE_TODO':
-      return {
-        ...state,
-        todos: state.todos.map(todo =>
-          todo.id === action.payload.id ? { ...todo, ...action.payload } : todo
-        ),
-        filteredTodos: state.todos.map(todo =>
-          todo.id === action.payload.id ? { ...todo, ...action.payload } : todo
-        ),
-      };
-    case 'DELETE_TODO':
-      return {
-        ...state,
-        todos: state.todos.filter(todo => todo.id !== action.payload),
-        filteredTodos: state.filteredTodos.filter(todo => todo.id !== action.payload),
-      };
-    case 'SET_FILTERED_TODOS':
-      return {
-        ...state,
-        filteredTodos: action.payload,
-      };
-    default:
-      return state;
-  }
-};
-
 const Todos = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [showForm, setShowForm] = useState(false);
-  const [newTodo, setNewTodo] = useState({
-    userId: 1,
-    id: '',
-    title: '',
-    completed: false,
-  });
-  const [sortCriteria, setSortCriteria] = useState('');
+  const [todos, setTodos] = useState([]);
+  const [filteredTodos, setFilteredTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState({ userId: 1, id: '', title: '', completed: false });
   const [searchQuery, setSearchQuery] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editingTodo, setEditingTodo] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+
   const navigate = useNavigate();
   const userId = 1;
 
@@ -63,12 +18,27 @@ const Todos = () => {
     fetch(`http://localhost:3001/todos?userId=${userId}`)
       .then((response) => response.json())
       .then((data) => {
-        dispatch({ type: 'SET_TODOS', payload: data });
+        setTodos(data);
+        setFilteredTodos(data);
       })
       .catch((error) => {
         console.error('There was a problem with the fetch operation:', error);
       });
   }, [userId]);
+
+  useEffect(() => {
+    let filteredTodosList = todos;
+
+    if (searchQuery) {
+      filteredTodosList = filteredTodosList.filter((todo) =>
+        todo.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        todo.id.toString().includes(searchQuery) ||
+        todo.completed.toString().includes(searchQuery)
+      );
+    }
+
+    setFilteredTodos(filteredTodosList);
+  }, [searchQuery, todos]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,8 +47,11 @@ const Todos = () => {
 
   const handleAddTodo = () => {
     if (newTodo.title) {
-      const newId = state.todos.length + 1;
-      const todoToAdd = { ...newTodo, id: newId };
+      const maxId = todos.reduce((max, todo) => {
+        return Math.max(max, parseInt(todo.id, 10));
+      }, 0);
+      const newId = (maxId + 1);
+      const todoToAdd = { ...newTodo, id: newId.toString() };
 
       fetch('http://localhost:3001/todos', {
         method: 'POST',
@@ -89,7 +62,8 @@ const Todos = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          dispatch({ type: 'ADD_TODO', payload: data });
+          setTodos([...todos, data]);
+          setFilteredTodos([...todos, data]);
           setShowForm(false);
           setNewTodo({ userId: 1, id: '', title: '', completed: false });
         })
@@ -114,7 +88,8 @@ const Todos = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        dispatch({ type: 'UPDATE_TODO', payload: data });
+        setTodos(todos.map((t) => (t.id === data.id ? data : t)));
+        setFilteredTodos(filteredTodos.map((t) => (t.id === data.id ? data : t)));
       })
       .catch((error) => {
         console.error('Error updating todo:', error);
@@ -126,29 +101,19 @@ const Todos = () => {
       method: 'DELETE',
     })
       .then(() => {
-        dispatch({ type: 'DELETE_TODO', payload: id });
+        // בוצע מחיקה בשרת, עכשיו עדכון הסטייט
+        const updatedTodos = todos.filter((todo) => todo.id !== id);
+        setTodos(updatedTodos);
+        setFilteredTodos(updatedTodos);
       })
       .catch((error) => {
         console.error('Error deleting todo:', error);
       });
   };
-
-  const handleSearch = () => {
-    let filteredTodos = state.todos;
-
-    if (searchQuery) {
-      filteredTodos = filteredTodos.filter((todo) =>
-        todo.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        todo.id.toString().includes(searchQuery) ||
-        todo.completed.toString().includes(searchQuery)
-      );
-    }
-
-    dispatch({ type: 'SET_FILTERED_TODOS', payload: filteredTodos });
-  };
+  
 
   const handleSort = (criteria) => {
-    let sortedTodos = [...state.filteredTodos];
+    let sortedTodos = [...filteredTodos];
 
     switch (criteria) {
       case 'id':
@@ -167,12 +132,12 @@ const Todos = () => {
         break;
     }
 
-    dispatch({ type: 'SET_FILTERED_TODOS', payload: sortedTodos });
+    setFilteredTodos(sortedTodos);
   };
 
   const handleEditTodo = (todo) => {
-    setIsEditing(true);
     setEditingTodo(todo);
+    setIsEditing(true);
   };
 
   const handleUpdateTodo = () => {
@@ -187,7 +152,8 @@ const Todos = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        dispatch({ type: 'UPDATE_TODO', payload: data });
+        setTodos(todos.map((t) => (t.id === data.id ? data : t)));
+        setFilteredTodos(filteredTodos.map((t) => (t.id === data.id ? data : t)));
         setIsEditing(false);
         setEditingTodo(null);
       })
@@ -210,7 +176,6 @@ const Todos = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="search-btn" onClick={handleSearch}>חפש</button>
       </div>
 
       <select className="sort-select" onChange={(e) => handleSort(e.target.value)}>
@@ -250,21 +215,22 @@ const Todos = () => {
         </div>
       )}
 
-      <ul className="todo-list">
-        {state.filteredTodos.map((todo) => (
-          <li key={todo.id} className="todo-item">
-            {todo.id}. {todo.title} - {todo.completed ? '✔' : 'לא בוצע'}
-            <input
-              className="todo-checkbox"
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => handleCompleteTodo(todo)}
-            />
-            <button className="delete-btn" onClick={() => handleDeleteTodo(todo.id)}>מחק</button>
-            <button className="edit-btn" onClick={() => handleEditTodo(todo)}>ערוך</button>
-          </li>
-        ))}
-      </ul>
+<ul className="todo-list">
+  {filteredTodos.map((todo) => (
+    <li key={todo.id} className="todo-item">
+      {todo.id}. {todo.title} - {todo.completed ? '✔' : 'לא בוצע'}
+      <input
+        className="todo-checkbox"
+        type="checkbox"
+        checked={todo.completed}
+        onChange={() => handleCompleteTodo(todo)}
+      />
+      <button className="delete-btn" onClick={() => handleDeleteTodo(todo.id)}>מחק</button>
+      <button className="edit-btn" onClick={() => handleEditTodo(todo)}>ערוך</button>
+    </li>
+  ))}
+</ul>
+
     </div>
   );
 };

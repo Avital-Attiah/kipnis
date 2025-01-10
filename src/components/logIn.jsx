@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userExist } from "../db-api";
+import '../style/logInStyle.css';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -12,15 +13,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // קריאה לפונקציה עם העברת navigate ו-setError כפרמטרים
-    var existUser=await userExist(username, password, setError);
-    if (existUser){
+    var existUser = await userExist(username, password, setError);
+    if (existUser) {
       localStorage.setItem("user", JSON.stringify(existUser));
       navigate("/home");
-    }
-    else{
+    } else {
       setError("שם משתמש או סיסמה שגויים!");
-     } 
-    
+    }
   };
 
   const handleRegisterClick = () => {
@@ -28,25 +27,27 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>התחברות</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="login-container">
+      <h1 className="login-title">התחברות</h1>
+      <form onSubmit={handleSubmit} className="login-form">
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="input-field"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="input-field"
         />
-        <button type="submit">התחבר</button>
+        <button type="submit" className="submit-button">התחבר</button>
       </form>
-      <button onClick={handleRegisterClick}>הרשם</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <button onClick={handleRegisterClick} className="register-button">הרשם</button>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

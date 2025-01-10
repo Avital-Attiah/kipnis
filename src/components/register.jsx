@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { userNameExist } from "../db-api";
 import { UserContext } from "../UserContext";
+import '../style/registerStyle.css';
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -31,7 +32,7 @@ const Register = () => {
       return;
     }
 
-    const existuserName = await userNameExist(username,setError); // Check if user exists
+    const existuserName = await userNameExist(username, setError); // Check if user exists
 
     if (!existuserName) {
       setError("המשתמש כבר קיים");
@@ -48,32 +49,35 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>רישום</h1>
-      <form onSubmit={handleRegister}>
+    <div className="register-container">
+      <h1 className="register-title">רישום</h1>
+      <form onSubmit={handleRegister} className="register-form">
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="input-field"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="input-field"
         />
         <input
           type="password"
           placeholder="Verify Password"
           value={verifyPassword}
           onChange={(e) => setVerifyPassword(e.target.value)}
+          className="input-field"
         />
-        <button type="submit">רשום</button>
-        <button type="button" onClick={handleLogInClick}>התחבר</button>
+        <button type="submit" className="submit-button">רשום</button>
+        <button type="button" onClick={handleLogInClick} className="login-button">התחבר</button>
       </form>
 
-      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };
