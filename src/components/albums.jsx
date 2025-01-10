@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
+import '../style/albumStyle.css'; // Import the CSS file
 
 const Albums = () => {
-  const [albums, setAlbums] = useState([]); // כל האלבומים
-  const [searchTerm, setSearchTerm] = useState(""); // ערך החיפוש
-  const [selectedAlbum, setSelectedAlbum] = useState(null); // האלבום שנבחר
-  const [photos, setPhotos] = useState([]); // רשימת תמונות באלבום שנבחר
-  const [photosPage, setPhotosPage] = useState(1); // עמוד התמונות הנוכחי
-  
-  // משתמש פעיל
+  const [albums, setAlbums] = useState([]); // All albums
+  const [searchTerm, setSearchTerm] = useState(""); // Search term
+  const [selectedAlbum, setSelectedAlbum] = useState(null); // Selected album
+  const [photos, setPhotos] = useState([]); // Photos in the selected album
+  const [photosPage, setPhotosPage] = useState(1); // Current page of photos
+
+  // Active user
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId = Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0].id : null;
 
-  // טוען את האלבומים מהשרת
+  // Fetch albums from the server
   useEffect(() => {
     if (userId) {
       fetch(`http://localhost:3001/albums?userId=${userId}`)
@@ -24,7 +25,7 @@ const Albums = () => {
     }
   }, [userId]);
 
-  // סינון האלבומים לפי ערך החיפוש
+  // Filter albums based on the search term
   const filteredAlbums = searchTerm
     ? albums.filter(
         (album) =>
@@ -33,7 +34,7 @@ const Albums = () => {
       )
     : albums;
 
-  // בחירת אלבום להצגת התמונות
+  // Handle album selection
   const handleAlbumClick = (albumId) => {
     setSelectedAlbum(albumId);
     setPhotos([]);
@@ -41,7 +42,7 @@ const Albums = () => {
     fetchPhotos(albumId, 1);
   };
 
-  // הבאת תמונות של האלבום שנבחר לפי עמוד
+  // Fetch photos for the selected album and page
   const fetchPhotos = (albumId, page) => {
     fetch(`http://localhost:3001/photos?albumId=${albumId}&_page=${page}&_limit=10`)
       .then((res) => res.json())
@@ -49,7 +50,7 @@ const Albums = () => {
       .catch((err) => console.error("Error fetching photos:", err));
   };
 
-  // טעינת עמוד תמונות נוסף
+  // Load more photos
   const loadMorePhotos = () => {
     const nextPage = photosPage + 1;
     setPhotosPage(nextPage);
@@ -57,44 +58,49 @@ const Albums = () => {
   };
 
   return (
-    <div>
-      <h1>אלבומים</h1>
-      
-      {/* הצגת תיבת החיפוש אם לא נבחר אלבום */}
+    <div className="albums-container">
+      <h1 className="albums-title">אלבומים</h1>
+
+      {/* Search input when no album is selected */}
       {!selectedAlbum && (
         <input
           type="text"
           placeholder="חפש לפי שם אלבום או מזהה"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          className="albums-search"
         />
       )}
 
-      {/* רשימת האלבומים */}
+      {/* List of albums */}
       {!selectedAlbum && (
-        <ul>
+        <ul className="albums-list">
           {filteredAlbums.map((album) => (
-            <li key={album.id} onClick={() => handleAlbumClick(album.id)}>
+            <li key={album.id} className="album-item" onClick={() => handleAlbumClick(album.id)}>
               <strong>#{album.id}</strong> - {album.title}
             </li>
           ))}
         </ul>
       )}
 
-      {/* הצגת פרטי אלבום שנבחר */}
+      {/* Selected album details */}
       {selectedAlbum && (
-        <div>
-          <button onClick={() => setSelectedAlbum(null)}>חזור</button>
+        <div className="album-details">
+          <button className="back-button" onClick={() => setSelectedAlbum(null)}>
+            חזור
+          </button>
           <h2>תמונות באלבום #{selectedAlbum}</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          <div className="album-images">
             {photos.map((photo) => (
-              <div key={photo.id} style={{ textAlign: "center" }}>
+              <div key={photo.id} className="album-image-container">
                 <img src={photo.thumbnailUrl} alt={photo.title} />
                 <p>{photo.title}</p>
               </div>
             ))}
           </div>
-          <button onClick={loadMorePhotos}>טען עוד</button>
+          <button className="load-more-button" onClick={loadMorePhotos}>
+            טען עוד
+          </button>
         </div>
       )}
     </div>

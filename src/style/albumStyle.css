@@ -1,0 +1,124 @@
+/* Container for the albums page */
+.albums-container {
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title */
+  .albums-title {
+    font-size: 2rem;
+    color: #f70f0f;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Search input */
+  .albums-search {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: #fff;
+  }
+  
+  .albums-search:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Album list */
+  .albums-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .album-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .album-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .album-item strong {
+    color: #007BFF;
+  }
+  
+  /* Album details */
+  .album-details {
+    margin-top: 20px;
+  }
+  
+  .album-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .album-image-container {
+    text-align: center;
+  }
+  
+  .album-image-container img {
+    max-width: 150px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+  }
+  
+  .album-image-container img:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Load more button */
+  .load-more-button {
+    background-color: #007BFF;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+  }
+  
+  .load-more-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .load-more-button:active {
+    background-color: #004085;
+  }
+  
+  /* Back button */
+  .back-button {
+    background-color: #1744d6;
+    color: white;
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .back-button:hover {
+    background-color: #0a2ea2;
+  }
+  
