@@ -28,6 +28,7 @@
 .add-post h2 {
   font-size: 24px;
   margin-bottom: 10px;
+  color: #db2b2b;
 }
 
 .add-post input,
@@ -50,7 +51,12 @@
 }
 
 .add-post button:hover {
-  background-color: #2196F3;
+  background-color: #c6d1d9;
+  border: 0.5px solid #007bff; /* מסגרת כחולה */
+}
+
+.otherBtn{
+  background-color: #f32121;
 }
 
 /* my posts section */
@@ -58,6 +64,7 @@
   width: 100%;
   max-width: 300px; /* הגבל את הרוחב של רשימת הפוסטים */
   margin-right: 20px;
+  color: #db2b2b;
 }
 
 .my-posts h2 {
@@ -75,7 +82,8 @@
 }
 
 .my-posts button {
-  background-color: #f1f1f1;
+  /* background-color: rgba(255, 48, 48, 0.2); */
+  background-color:#fbeeee84
   color: #333;
   border: 1px solid #ddd;
   padding: 10px 20px;
@@ -84,7 +92,8 @@
 }
 
 .my-posts button:hover {
-  background-color: #e5e5e5;
+  background-color: #fbeeee84;
+  
 }
 
 /* post details */

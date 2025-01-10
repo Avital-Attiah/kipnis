@@ -91,15 +91,7 @@ const Posts = () => {
 
   return (
     <div className="container">
-      {/* תיבת חיפוש */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="חפש פוסט לפי כותרת או מזהה"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+      
 
       {/* כפתור להוספת פוסט */}
       <div className="add-post">
@@ -117,7 +109,17 @@ const Posts = () => {
         />
         <button onClick={handleAddPost}>הוסף פוסט</button>
       </div>
-      <button onClick={goToOtherPosts}>פוסטים אחרים</button>
+      <button className="otherBtn" onClick={goToOtherPosts}>פוסטים אחרים</button>
+
+      {/* תיבת חיפוש */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="חפש פוסט לפי כותרת או מזהה"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       {/* רשימת הפוסטים שלי */}
       <div className="my-posts">

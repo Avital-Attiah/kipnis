@@ -9,6 +9,11 @@
     justify-content: center;
     position: relative;
   }
+  .container h2 {
+    color: red;
+  }
+  
+
   
   /* search bar */
   input[type="text"] {
@@ -97,7 +102,7 @@
   }
   
   .otherPost-details button:hover {
-    background-color: #2196F3;
+    background-color: #45a049;
   }
   
   /* when a post is selected */

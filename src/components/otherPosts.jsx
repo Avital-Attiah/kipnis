@@ -50,7 +50,8 @@ const OtherPosts = () => {
   return (
     <div className="container">
       <div>
-        <h2>פוסטים של משתמשים אחרים</h2>
+      <h2 >פוסטים של משתמשים אחרים</h2>
+
         
         {/* שדה חיפוש */}
         <input 
