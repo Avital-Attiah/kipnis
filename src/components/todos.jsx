@@ -12,7 +12,11 @@ const Todos = () => {
   const [showForm, setShowForm] = useState(false);
 
   const navigate = useNavigate();
-  const userId = 1;
+
+  // Getting the user from localStorage
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const currentUser = Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
+  const userId = currentUser ? currentUser.id : 1; // Use userId from localStorage or default to 1
 
   useEffect(() => {
     fetch(`http://localhost:3001/todos?userId=${userId}`)
@@ -47,28 +51,46 @@ const Todos = () => {
 
   const handleAddTodo = () => {
     if (newTodo.title) {
-      const maxId = todos.reduce((max, todo) => {
-        return Math.max(max, parseInt(todo.id, 10));
-      }, 0);
-      const newId = (maxId + 1);
-      const todoToAdd = { ...newTodo, id: newId.toString() };
-
-      fetch('http://localhost:3001/todos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(todoToAdd),
-      })
+      // Find the highest ID from the server
+      fetch('http://localhost:3001/todos')
         .then((response) => response.json())
         .then((data) => {
-          setTodos([...todos, data]);
-          setFilteredTodos([...todos, data]);
-          setShowForm(false);
-          setNewTodo({ userId: 1, id: '', title: '', completed: false });
+          const maxId = data.reduce((max, todo) => {
+            return Math.max(max, parseInt(todo.id, 10));
+          }, 0);
+
+          // Create a new ID, incremented by 1
+          const newId = (maxId + 1).toString();
+
+          // Create the new todo object with the desired properties
+          const todoToAdd = {
+            userId: newTodo.userId, // First userId
+            id: newId,             // Then id
+            title: newTodo.title,
+            completed: newTodo.completed,
+          };
+
+          fetch('http://localhost:3001/todos', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(todoToAdd),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              setTodos([...todos, data]);
+              setFilteredTodos([...todos, data]);
+              setShowForm(false);
+              setNewTodo({ userId: 1, id: '', title: '', completed: false });
+            })
+            .catch((error) => {
+              alert('הייתה שגיאה בהוספת המטלה');
+              console.error(error);
+            });
         })
         .catch((error) => {
-          alert('הייתה שגיאה בהוספת המטלה');
+          alert('הייתה שגיאה בקריאת המטלות מהשרת');
           console.error(error);
         });
     } else {
@@ -101,7 +123,7 @@ const Todos = () => {
       method: 'DELETE',
     })
       .then(() => {
-        // בוצע מחיקה בשרת, עכשיו עדכון הסטייט
+        // Remove the deleted todo from state
         const updatedTodos = todos.filter((todo) => todo.id !== id);
         setTodos(updatedTodos);
         setFilteredTodos(updatedTodos);
@@ -110,7 +132,6 @@ const Todos = () => {
         console.error('Error deleting todo:', error);
       });
   };
-  
 
   const handleSort = (criteria) => {
     let sortedTodos = [...filteredTodos];
@@ -215,22 +236,22 @@ const Todos = () => {
         </div>
       )}
 
-<ul className="todo-list">
-  {filteredTodos.map((todo) => (
-    <li key={todo.id} className="todo-item">
-      {todo.id}. {todo.title} - {todo.completed ? '✔' : 'לא בוצע'}
-      <input
-        className="todo-checkbox"
-        type="checkbox"
-        checked={todo.completed}
-        onChange={() => handleCompleteTodo(todo)}
-      />
-      <button className="delete-btn" onClick={() => handleDeleteTodo(todo.id)}>מחק</button>
-      <button className="edit-btn" onClick={() => handleEditTodo(todo)}>ערוך</button>
-    </li>
-  ))}
-</ul>
-
+      <ul className="todo-list">
+        {filteredTodos.map((todo, index) => (
+          <li key={todo.id} className="todo-item">
+            {/* Display the dynamic number (index + 1) instead of the ID */}
+            {index + 1}. {todo.title} - {todo.completed ? '✔' : 'לא בוצע'}
+            <input
+              className="todo-checkbox"
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => handleCompleteTodo(todo)}
+            />
+            <button className="delete-btn" onClick={() => handleDeleteTodo(todo.id)}>מחק</button>
+            <button className="edit-btn" onClick={() => handleEditTodo(todo)}>ערוך</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
