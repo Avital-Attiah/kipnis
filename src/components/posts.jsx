@@ -12,8 +12,7 @@ const Posts = () => {
   const navigate = useNavigate();
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  const currentUser =
-    Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
+  const currentUser =Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
 
 
   useEffect(() => {
