@@ -8,9 +8,7 @@ const OtherPosts = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // שדה חיפוש
 
-  const storedUser = localStorage.getItem("user");
-  const currentUser = storedUser ? JSON.parse(storedUser)?.[0] : null;
-
+  const currentUser = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     if (!currentUser?.id) {
       console.error("User not logged in or missing ID");
@@ -31,7 +29,7 @@ const OtherPosts = () => {
         setOtherUsersPosts([]); // ריקון נתונים במקרה של כשל
         setFilteredPosts([]);  // ריקון filtered posts במקרה של כשל
       });
-  }, [currentUser]);
+  }, []);
 
   // סינון הפוסטים לפי חיפוש
   useEffect(() => {

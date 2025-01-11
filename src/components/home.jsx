@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link, Outlet } from "react-router-dom";
-import '../style/homeStyle.css'
+import '../style/homeStyle.css';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -11,16 +11,9 @@ const Home = () => {
 
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser);
-
-        if (Array.isArray(parsedUser) && parsedUser.length > 0) {
-          const lastUser = parsedUser[parsedUser.length - 1]; // משתמש אחרון במערך
-          setUser(lastUser);
-          console.log("User set successfully:", lastUser);
-        } else {
-          console.error("Parsed data is not an array or is empty:", parsedUser);
-          setUser(null);
-        }
+        const parsedUser = JSON.parse(storedUser); // פריסה ישירה של האובייקט
+        setUser(parsedUser);
+        console.log("User set successfully:", parsedUser);
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
         setUser(null);

@@ -9,9 +9,8 @@ const Albums = () => {
   const [photosPage, setPhotosPage] = useState(1); // Current page of photos
 
   // Active user
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const userId = Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0].id : null;
-
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const userId= currentUser.id;
   // Fetch albums from the server
   useEffect(() => {
     if (userId) {

@@ -10,17 +10,21 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // קריאה לפונקציה עם העברת navigate ו-setError כפרמטרים
     var existUser = await userExist(username, password, setError);
     if (existUser) {
-      localStorage.setItem("user", JSON.stringify(existUser));
+      // מחיקת המשתמש הקודם והוספת החדש
+    //  localStorage.removeItem("user"); // אופציונלי - מסיר את המפתח הקודם
+      localStorage.setItem("user", JSON.stringify(existUser[0])); // מוסיף את המשתמש החדש
       navigate("/home");
     } else {
       setError("שם משתמש או סיסמה שגויים!");
     }
   };
+  
 
   const handleRegisterClick = () => {
     navigate("/register");

@@ -9,15 +9,11 @@ const Info = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        if (Array.isArray(parsedUser) && parsedUser.length > 0) {
-          setUser(parsedUser[0]); // משתמש ראשון במערך
-        } else {
-          console.error("User data is invalid");
-          setUser(null);
-        }
+        const parsedUser = JSON.parse(storedUser); // פריסה ישירה של האובייקט
+        setUser(parsedUser);
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
+        setUser(null);
       }
     }
   }, []);

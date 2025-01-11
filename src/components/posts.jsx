@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import '../style/postStyle.css';
-import Comments from "./comments"; 
+import "../style/postStyle.css";
+import Comments from "./comments";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -11,22 +11,25 @@ const Posts = () => {
   const [isEditingPost, setIsEditingPost] = useState(false);
   const navigate = useNavigate();
 
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const currentUser =
-    Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
-
+  // שליפת המשתמש הנוכחי מ-localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+    if (!currentUser) {
+      console.error("No user found in localStorage. Redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
+    // טעינת פוסטים בהתאם ל-userId
     if (searchTerm === "") {
-      if (currentUser && currentUser.id) {
+      if (currentUser.id) {
         fetch(`http://localhost:3001/posts?userId=${currentUser.id}`)
           .then((res) => {
             if (!res.ok) throw new Error("Failed to fetch posts");
             return res.json();
           })
-          .then((data) => {
-            setPosts(data); // טען את כל הפוסטים מחדש
-          })
+          .then((data) => setPosts(data))
           .catch((err) => console.error("Error fetching posts", err));
       }
     } else {
@@ -45,11 +48,8 @@ const Posts = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(post),
     })
-      .then((res) => res.ok ? res.json() : Promise.reject("Failed to add post"))
-      .then((data) => {
-        setPosts([...posts, data]);
-
-      })
+      .then((res) => (res.ok ? res.json() : Promise.reject("Failed to add post")))
+      .then((data) => setPosts([...posts, data]))
       .catch((err) => console.error("Error adding post", err));
     setNewPost({ title: "", body: "" });
   };
@@ -61,38 +61,34 @@ const Posts = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedPost),
     })
-      .then((res) => res.ok ? res.json() : Promise.reject("Failed to update post"))
+      .then((res) => (res.ok ? res.json() : Promise.reject("Failed to update post")))
       .then((updatedPostData) => {
         setPosts(posts.map((post) => (post.id === updatedPostData.id ? updatedPostData : post)));
         setSelectedPost(updatedPostData);
-        setIsEditingPost(false); // סיים את מצב העריכה לאחר עדכון הפוסט
+        setIsEditingPost(false);
       })
       .catch((err) => console.error("Error editing post", err));
   };
-  
 
   const handleDeletePost = () => {
     fetch(`http://localhost:3001/posts/${selectedPost.id}`, { method: "DELETE" })
       .then(() => {
         setPosts(posts.filter((post) => post.id !== selectedPost.id));
-        setFilteredPosts(filteredPosts.filter((post) => post.id !== selectedPost.id));
         setSelectedPost(null);
       })
       .catch((err) => console.error("Error deleting post", err));
   };
+
   const handleSelectPost = (post) => {
-    console.log("Selected post:", selectedPost);
-    setSelectedPost(post); // לבחור פוסט
+    setSelectedPost(post);
   };
 
   const goToOtherPosts = () => {
     navigate("./otherPosts");
-  }
+  };
 
   return (
     <div className="container">
-      
-
       {/* כפתור להוספת פוסט */}
       <div className="add-post">
         <h2>הוסף פוסט חדש</h2>
@@ -109,7 +105,9 @@ const Posts = () => {
         />
         <button onClick={handleAddPost}>הוסף פוסט</button>
       </div>
-      <button className="otherBtn" onClick={goToOtherPosts}>פוסטים אחרים</button>
+      <button className="otherBtn" onClick={goToOtherPosts}>
+        פוסטים אחרים
+      </button>
 
       {/* תיבת חיפוש */}
       <div className="search-bar">
@@ -127,7 +125,9 @@ const Posts = () => {
         <ul>
           {posts.map((post) => (
             <li key={post.id}>
-              <button onClick={() => handleSelectPost(post)}>{post.id}: {post.title}</button>
+              <button onClick={() => handleSelectPost(post)}>
+                {post.id}: {post.title}
+              </button>
               {post.id === selectedPost?.id && (
                 <div>
                   <button onClick={() => setIsEditingPost(true)}>ערוך</button>
@@ -148,7 +148,6 @@ const Posts = () => {
               <input
                 type="text"
                 value={newPost.title || selectedPost?.title || ""}
-
                 onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
               />
               <textarea
@@ -160,10 +159,13 @@ const Posts = () => {
             </>
           ) : (
             <>
-              <p><strong>כותרת:</strong> {selectedPost.title}</p>
-              <p><strong>תוכן:</strong> {selectedPost.body}</p>
+              <p>
+                <strong>כותרת:</strong> {selectedPost.title}
+              </p>
+              <p>
+                <strong>תוכן:</strong> {selectedPost.body}
+              </p>
               <Comments postId={selectedPost.id} currentUser={currentUser} />
-              
             </>
           )}
         </div>
