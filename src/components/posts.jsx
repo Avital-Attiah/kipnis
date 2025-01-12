@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "../style/postStyle.css";
 import Post from "./post";
 
-
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -38,24 +37,44 @@ const Posts = () => {
     : posts;
 
   const handleAddPost = () => {
-    const post = { ...newPost, userId: currentUser.id };
-    fetch("http://localhost:3001/posts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(post),
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject("Failed to add post")))
-      .then((data) => setPosts([...posts, data]))
-      .catch((err) => console.error("Error adding post", err));
-    setNewPost({ title: "", body: "" });
+    // שלח בקשה לקבלת הפוסטים האחרונים כדי לדעת מה ה-ID האחרון
+    fetch("http://localhost:3001/posts")
+      .then((res) => res.json())
+      .then((data) => {
+        const lastPostId = data.length > 0 ? data[data.length - 1].id : 0;
+        const post = {
+          ...newPost,
+          userId: currentUser.id,
+          id: lastPostId + 1, // הגדר את ה-ID החדש כ-ID האחרון + 1
+        };
+
+        fetch("http://localhost:3001/posts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(post),
+        })
+          .then((res) => (res.ok ? res.json() : Promise.reject("Failed to add post")))
+          .then((data) => setPosts([...posts, data]))
+          .catch((err) => console.error("Error adding post", err));
+
+        setNewPost({ title: "", body: "" }); // אתחל את השדות אחרי ההוספה
+      })
+      .catch((err) => console.error("Error fetching last post", err));
   };
 
   const goToOtherPosts = () => {
     navigate("./otherPosts");
   };
 
+  const goToHome = () => {
+    navigate("/home");
+  };
+
   return (
     <div className="container">
+      {/* כפתור Home */}
+      <button className="homeBtn" onClick={goToHome}>Home</button>
+
       <div className="add-post">
         <h2>הוסף פוסט חדש</h2>
         <input
@@ -69,7 +88,7 @@ const Posts = () => {
           value={newPost.body}
           onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
         />
-        <button onClick={handleAddPost}>הוסף פוסט</button>
+        <button onClick={handleAddPost} className="addPostBtn">הוסף פוסט</button>
       </div>
 
       <button className="otherBtn" onClick={goToOtherPosts}>
@@ -97,6 +116,7 @@ const Posts = () => {
               posts={posts}
               setPosts={setPosts}
               currentUser={currentUser}
+              allowEditDelete={true}
             />
           ))}
         </ul>

@@ -166,3 +166,21 @@ button:disabled {
 button:disabled:hover {
   background-color: #ddd;
 }
+/* .homeBtn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: red; /* צבע אדום */
+  color: white;
+  border: none;
+  padding: 5px 10px; /* הקטנה של הריפוד */
+  cursor: pointer;
+  font-size: 12px; /* הקטנת גודל הפונט */
+  z-index: 1000; /* וודא שהכפתור יישאר מעל שאר התוכן */
+}
+
+
+.homeBtn:hover {
+  background-color: rgba(255, 0, 0, 0.396);
+} */
+

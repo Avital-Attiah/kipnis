@@ -112,6 +112,9 @@ const Todos = () => {
 
   return (
     <div className="todos-container">
+      {/* כפתור Home */}
+      <button className="homeBtn" onClick={() => navigate('/home')}>Home</button>
+
       <h1 className="todos-header">Todos</h1>
       <button className="exit-btn" onClick={() => navigate('/home')}>יציאה</button>
       <button className="add-todo-btn" onClick={() => setShowForm(!showForm)}>הוסף מטלה חדשה</button>
