@@ -11,8 +11,9 @@ const Todos = () => {
   const [showForm, setShowForm] = useState(false);
 
   const navigate = useNavigate();
+
   const currentUser = JSON.parse(localStorage.getItem("user"));
-  const userId =  currentUser.id;
+  const userId = currentUser.id;
 
   useEffect(() => {
     fetch(`http://localhost:3001/todos?userId=${userId}`)

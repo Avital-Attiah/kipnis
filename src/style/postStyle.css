@@ -6,7 +6,7 @@
   color: #333;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* מיישר את כל התוכן לשמאל */
+  align-items: flex-start;
 }
 
 /* search bar */
@@ -25,44 +25,10 @@
   margin-bottom: 30px;
 }
 
-.add-post h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #db2b2b;
-}
-
-.add-post input,
-.add-post textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.add-post button {
-  background-color:#2196F3;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.add-post button:hover {
-  background-color: #c6d1d9;
-  border: 0.5px solid #007bff; /* מסגרת כחולה */
-}
-
-.otherBtn{
-  background-color: #f32121;
-}
-
 /* my posts section */
 .my-posts {
   width: 100%;
-  max-width: 300px; /* הגבל את הרוחב של רשימת הפוסטים */
+  max-width: 300px;
   margin-right: 20px;
   color: #db2b2b;
 }
@@ -82,8 +48,7 @@
 }
 
 .my-posts button {
-  /* background-color: rgba(255, 48, 48, 0.2); */
-  background-color:#fbeeee84
+  background-color: #fbeeee84;
   color: #333;
   border: 1px solid #ddd;
   padding: 10px 20px;
@@ -93,62 +58,29 @@
 
 .my-posts button:hover {
   background-color: #fbeeee84;
-  
 }
 
-/* post details */
-.post-details {
+/* selected post - will appear to the right of the screen */
+.selected-post {
   position: fixed;
   top: 10%;
-  right: 0; /* מיקום הצד הימני */
+  right: 0;
   width: 30%;
   background-color: #f9f9f9;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  z-index: 1000; /* מוודא שזה יופיע מעל שאר התוכן */
 }
 
-
-.post-details h2 {
+.selected-post h3 {
   font-size: 24px;
   margin-bottom: 20px;
 }
 
-.post-details input,
-.post-details textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.selected-post p {
   font-size: 16px;
-}
-
-.post-details button {
-  background-color: #2196F3;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-.post-details button:hover {
-  background-color: #2196F3;
-}
-
-/* edit and delete buttons */
-.post-details div button {
-  background-color: #f44336;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.post-details div button:hover {
-  background-color: #e53935;
+  margin-bottom: 10px;
 }

@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from "react";
-import '../style/albumStyle.css'; // Import the CSS file
+import Album from "./album";
+import "../style/albumStyle.css";
 
 const Albums = () => {
-  const [albums, setAlbums] = useState([]); // All albums
-  const [searchTerm, setSearchTerm] = useState(""); // Search term
-  const [selectedAlbum, setSelectedAlbum] = useState(null); // Selected album
-  const [photos, setPhotos] = useState([]); // Photos in the selected album
-  const [photosPage, setPhotosPage] = useState(1); // Current page of photos
+  const [albums, setAlbums] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAlbum, setSelectedAlbum] = useState(null);
+  const [newAlbumTitle, setNewAlbumTitle] = useState("");
 
-  // Active user
   const currentUser = JSON.parse(localStorage.getItem("user"));
-  const userId= currentUser.id;
-  // Fetch albums from the server
+  const userId = currentUser.id;
+
   useEffect(() => {
     if (userId) {
+      console.log("try")
       fetch(`http://localhost:3001/albums?userId=${userId}`)
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch albums");
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((data) => setAlbums(data))
         .catch((err) => console.error("Error fetching albums:", err));
     }
   }, [userId]);
 
-  // Filter albums based on the search term
   const filteredAlbums = searchTerm
     ? albums.filter(
         (album) =>
@@ -33,74 +29,70 @@ const Albums = () => {
       )
     : albums;
 
-  // Handle album selection
-  const handleAlbumClick = (albumId) => {
-    setSelectedAlbum(albumId);
-    setPhotos([]);
-    setPhotosPage(1);
-    fetchPhotos(albumId, 1);
-  };
+  // Add a new album
+  const handleAddAlbum = () => {
+    if (!newAlbumTitle.trim()) {
+      alert("נא להזין כותרת לאלבום");
+      return;
+    }
 
-  // Fetch photos for the selected album and page
-  const fetchPhotos = (albumId, page) => {
-    fetch(`http://localhost:3001/photos?albumId=${albumId}&_page=${page}&_limit=10`)
+    const newAlbum = {
+      title: newAlbumTitle,
+      userId: userId,
+    };
+
+    fetch("http://localhost:3001/albums", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newAlbum),
+    })
       .then((res) => res.json())
-      .then((data) => setPhotos((prev) => [...prev, ...data]))
-      .catch((err) => console.error("Error fetching photos:", err));
-  };
-
-  // Load more photos
-  const loadMorePhotos = () => {
-    const nextPage = photosPage + 1;
-    setPhotosPage(nextPage);
-    fetchPhotos(selectedAlbum, nextPage);
+      .then((data) => {
+        setAlbums((prev) => [...prev, data]);
+        setNewAlbumTitle(""); // Clear the input field
+      })
+      .catch((err) => console.error("Error adding album:", err));
   };
 
   return (
     <div className="albums-container">
-      <h1 className="albums-title">אלבומים</h1>
-
-      {/* Search input when no album is selected */}
-      {!selectedAlbum && (
-        <input
-          type="text"
-          placeholder="חפש לפי שם אלבום או מזהה"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="albums-search"
-        />
-      )}
-
-      {/* List of albums */}
-      {!selectedAlbum && (
-        <ul className="albums-list">
-          {filteredAlbums.map((album) => (
-            <li key={album.id} className="album-item" onClick={() => handleAlbumClick(album.id)}>
-              <strong>#{album.id}</strong> - {album.title}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* Selected album details */}
-      {selectedAlbum && (
-        <div className="album-details">
-          <button className="back-button" onClick={() => setSelectedAlbum(null)}>
-            חזור
-          </button>
-          <h2>תמונות באלבום #{selectedAlbum}</h2>
-          <div className="album-images">
-            {photos.map((photo) => (
-              <div key={photo.id} className="album-image-container">
-                <img src={photo.thumbnailUrl} alt={photo.title} />
-                <p>{photo.title}</p>
-              </div>
+      {!selectedAlbum ? (
+        <>
+          <h1 className="albums-title">אלבומים</h1>
+          <input
+            type="text"
+            placeholder="חפש לפי שם אלבום או מזהה"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="albums-search"
+          />
+          <ul className="albums-list">
+            {filteredAlbums.map((album) => (
+              <li
+                key={album.id}
+                className="album-item"
+                onClick={() => setSelectedAlbum(album.id)}
+              >
+                <strong>#{album.id}</strong> - {album.title}
+              </li>
             ))}
+          </ul>
+          <div className="add-album">
+            <h3>הוסף אלבום חדש</h3>
+            <input
+              type="text"
+              placeholder="כותרת האלבום"
+              value={newAlbumTitle}
+              onChange={(e) => setNewAlbumTitle(e.target.value)}
+              className="new-album-input"
+            />
+            <button onClick={handleAddAlbum} className="add-album-button">
+              הוסף אלבום
+            </button>
           </div>
-          <button className="load-more-button" onClick={loadMorePhotos}>
-            טען עוד
-          </button>
-        </div>
+        </>
+      ) : (
+        <Album albumId={selectedAlbum} onBack={() => setSelectedAlbum(null)} />
       )}
     </div>
   );
