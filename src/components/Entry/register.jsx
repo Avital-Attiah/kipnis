@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { userNameExist } from "../db-api";
-import { UserContext } from "../UserContext";
-import '../style/registerStyle.css';
+import { userNameExist } from "../../db-api";
+import { UserContext } from "../../UserContext";
+import '../../style/registerStyle.css';
 
 const Register = () => {
   const [username, setUsername] = useState("");

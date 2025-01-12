@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Post from "./post";
-import "../style/otherPostStyle.css";
+import "../../style/otherPostStyle.css";
 import { useNavigate } from "react-router-dom";
 
 const OtherPosts = () => {

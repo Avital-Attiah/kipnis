@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TodoItem from './todoItem'; 
-import '../style/todoStyle.css';
+import '../../style/todoStyle.css';
 
 const Todos = () => {
   const [todos, setTodos] = useState([]);
@@ -37,7 +37,6 @@ const Todos = () => {
         todo.completed.toString().includes(searchQuery)
       );
     }
-
     setFilteredTodos(filteredTodosList);
   }, [searchQuery, todos]);
 
@@ -71,7 +70,7 @@ const Todos = () => {
               setTodos([...todos, data]);
               setFilteredTodos([...todos, data]);
               setShowForm(false);
-              setNewTodo({ userId: 1, id: '', title: '', completed: false });
+              setNewTodo({ userId:{userId} , id: '', title: '', completed: false });
             })
             .catch((error) => {
               alert('הייתה שגיאה בהוספת המטלה');

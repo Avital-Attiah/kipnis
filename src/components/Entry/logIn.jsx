@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userExist } from "../db-api";
-import '../style/logInStyle.css';
+import { userExist } from "../../db-api";
+import '../../style/logInStyle.css';
 
 const Login = () => {
   const [username, setUsername] = useState("");

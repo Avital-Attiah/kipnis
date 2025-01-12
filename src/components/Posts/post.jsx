@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Comments from "./comments";
 
-import "../style/postStyle.css";
+import "../../style/postStyle.css";
 
 const Post = (data) => {
   const [isEditingPost, setIsEditingPost] = useState(false);

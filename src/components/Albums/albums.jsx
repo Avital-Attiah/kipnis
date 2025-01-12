@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Album from "./album";
-import "../style/albumStyle.css";
+import "../../style/albumStyle.css";
 import { useNavigate } from "react-router-dom";
 
 const Albums = () => {

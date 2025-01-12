@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../UserContext";
-import '../style/fullInfoStyle.css'; // Import the CSS file
+import { UserContext } from "../../UserContext";
+import '../../style/fullInfoStyle.css'; // Import the CSS file
 
 function FullInfo() {
   const { userData } = useContext(UserContext);

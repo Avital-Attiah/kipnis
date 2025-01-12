@@ -1,38 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import '../style/infoStyle.css';
+import React, { useEffect, useState } from "react"; 
+import { useNavigate } from "react-router-dom"; 
+import '../style/infoStyle.css'; 
 
 const Info = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // הגדרת מצב למשתמש
   const navigate = useNavigate();
 
   useEffect(() => {
-   
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user"); // קבלת המידע על המשתמש מ-localStorage
     if (storedUser) {
       try {
-        const currentUser = JSON.parse(storedUser); 
-        setUser(currentUser);
+        const currentUser = JSON.parse(storedUser); // ניתוח המידע שנשמר
+        setUser(currentUser); // עדכון המצב עם פרטי המשתמש
       } catch (error) {
-        console.error("Failed to parse user from localStorage:", error);
-        setUser(null);
+        console.error("Failed to parse user from localStorage:", error); // הודעה אם ניתוח המידע נכשל
+        setUser(null); // איפוס המצב במקרה של שגיאה
       }
     }
-  }, []);
+  }, []); // הריצה תתרחש רק פעם אחת בעת טעינת הרכיב
 
-  
-
+ 
   if (!user) {
     return <div className="info-container">לא נמצא מידע על המשתמש.</div>;
   }
 
   return (
     <div className="info-container">
-      {/* כפתור Home */}
+      {/* כפתור ניווט לדף הבית */}
       <button className="homeBtn" onClick={() =>navigate(`/${user.username}/${user.id}/home`)}>Home</button>
 
       <h1 className="info-title">פרטי המשתמש</h1>
       <ul className="info-list">
+        {/* הצגת פרטי המשתמש */}
         <li><strong>מזהה:</strong> {user.id}</li>
         <li><strong>שם:</strong> {user.name}</li>
         <li><strong>שם משתמש:</strong> {user.username}</li>
@@ -62,4 +61,4 @@ const Info = () => {
   );
 };
 
-export default Info;
+export default Info; 
