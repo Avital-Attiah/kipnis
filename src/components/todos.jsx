@@ -113,7 +113,7 @@ const Todos = () => {
   return (
     <div className="todos-container">
       {/* כפתור Home */}
-      <button className="homeBtn" onClick={() => navigate('/home')}>Home</button>
+      <button className="homeBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/home`)}>Home</button>
 
       <h1 className="todos-header">Todos</h1>
       <button className="exit-btn" onClick={() => navigate('/home')}>יציאה</button>

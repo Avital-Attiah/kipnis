@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Album from "./album";
 import "../style/albumStyle.css";
+import { useNavigate } from "react-router-dom";
 
 const Albums = () => {
   const [albums, setAlbums] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [newAlbumTitle, setNewAlbumTitle] = useState("");
+  const navigate = useNavigate();
+
 
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const userId = currentUser.id;
@@ -55,6 +58,8 @@ const Albums = () => {
   };
 
   return (
+    <>
+    <button className="homeBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/home`)}>Home</button>
     <div className="albums-container">
       {!selectedAlbum ? (
         <>
@@ -95,6 +100,7 @@ const Albums = () => {
         <Album albumId={selectedAlbum} onBack={() => setSelectedAlbum(null)} />
       )}
     </div>
+    </>
   );
 };
 

@@ -66,14 +66,12 @@ const Posts = () => {
     navigate("./otherPosts");
   };
 
-  const goToHome = () => {
-    navigate("/home");
-  };
 
   return (
     <div className="container">
       {/* כפתור Home */}
-      <button className="homeBtn" onClick={goToHome}>Home</button>
+      <button className="homeBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/home`)}>Home</button>
+
 
       <div className="add-post">
         <h2>הוסף פוסט חדש</h2>
@@ -91,7 +89,7 @@ const Posts = () => {
         <button onClick={handleAddPost} className="addPostBtn">הוסף פוסט</button>
       </div>
 
-      <button className="otherBtn" onClick={goToOtherPosts}>
+      <button className="otherBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/otherPosts`)}>
         פוסטים אחרים
       </button>
 

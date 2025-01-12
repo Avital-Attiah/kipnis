@@ -7,12 +7,12 @@ const Info = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // שליפת המשתמש מ-localStorage
+   
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser); // פריסה ישירה של האובייקט
-        setUser(parsedUser);
+        const currentUser = JSON.parse(storedUser); 
+        setUser(currentUser);
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
         setUser(null);
@@ -20,9 +20,7 @@ const Info = () => {
     }
   }, []);
 
-  const goToHome = () => {
-    navigate("/home");
-  };
+  
 
   if (!user) {
     return <div className="info-container">לא נמצא מידע על המשתמש.</div>;
@@ -31,7 +29,7 @@ const Info = () => {
   return (
     <div className="info-container">
       {/* כפתור Home */}
-      <button className="homeBtn" onClick={goToHome}>Home</button>
+      <button className="homeBtn" onClick={() =>navigate(`/${user.username}/${user.id}/home`)}>Home</button>
 
       <h1 className="info-title">פרטי המשתמש</h1>
       <ul className="info-list">
