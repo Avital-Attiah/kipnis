@@ -11,10 +11,8 @@ const Todos = () => {
   const [showForm, setShowForm] = useState(false);
 
   const navigate = useNavigate();
-
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const currentUser = Array.isArray(storedUser) && storedUser.length > 0 ? storedUser[0] : null;
-  const userId = currentUser ? currentUser.id : 1;
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const userId =  currentUser.id;
 
   useEffect(() => {
     fetch(`http://localhost:3001/todos?userId=${userId}`)
@@ -26,7 +24,7 @@ const Todos = () => {
       .catch((error) => {
         console.error('There was a problem with the fetch operation:', error);
       });
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     let filteredTodosList = todos;
