@@ -48,7 +48,7 @@
 }
 
 .my-posts button {
-  background-color: #fbeeee84;
+  background-color: #eef2fb84;
   color: #333;
   border: 1px solid #ddd;
   padding: 10px 20px;
@@ -66,14 +66,16 @@
   top: 10%;
   right: 0;
   width: 30%;
+  max-height: 80%; /* הגבלת גובה */
   background-color: #f9f9f9;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  z-index: 1000; /* מוודא שזה יופיע מעל שאר התוכן */
+  overflow-y: auto; /* מאפשר גלילה אנכית */
+  z-index: 1000; /* וידוא שהרכיב יופיע מעל שאר התוכן */
 }
+
 
 .selected-post h3 {
   font-size: 24px;
@@ -84,3 +86,28 @@
   font-size: 16px;
   margin-bottom: 10px;
 }
+
+.addPostBtn,  .otherBtn{
+  background-color:rgba(0, 0, 255, 0.507);
+}
+
+ .deleteEditBtn {
+  background-color: rgba(0, 0, 255, 0.507) !important;
+}
+/* .homeBtn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: red; /* צבע אדום */
+  color: white;
+  border: none;
+  padding: 5px 10px; /* הקטנה של הריפוד */
+  cursor: pointer;
+  font-size: 12px; /* הקטנת גודל הפונט */
+  z-index: 1000; /* וודא שהכפתור יישאר מעל שאר התוכן */
+}
+
+
+.homeBtn:hover {
+  background-color: rgba(255, 0, 0, 0.396);
+} */

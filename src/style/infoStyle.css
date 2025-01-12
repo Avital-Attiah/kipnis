@@ -57,3 +57,24 @@
     display: none;
   }
   
+  .homeBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: red; /* צבע אדום */
+    color: white;
+    border: none;
+    padding: 5px 15px; /* הקטנת הריפוד לכל צד */
+    cursor: pointer;
+    font-size: 30px; /* הקטנת גודל הפונט */
+    z-index: 1000; /* וודא שהכפתור יישאר מעל שאר התוכן */
+    width: auto; /* מוודא שהכפתור לא יתפשט לכל רוחב */
+    display: inline-block; /* מוודא שהכפתור יישאר בגודל טבעי */
+  }
+  
+  
+  
+  .homeBtn:hover {
+    background-color: rgba(255, 0, 0, 0.396);
+  }
+  

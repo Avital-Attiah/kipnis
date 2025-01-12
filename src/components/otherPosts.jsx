@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Comments from './comments';  // Import the Comments component
-import '../style/otherPostStyle.css';
+import Post from "./post";
+import "../style/otherPostStyle.css";
+import { useNavigate } from "react-router-dom";
 
 const OtherPosts = () => {
   const [otherUsersPosts, setOtherUsersPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); // שדה חיפוש
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const currentUser = JSON.parse(localStorage.getItem("user"));
+
   useEffect(() => {
     if (!currentUser?.id) {
       console.error("User not logged in or missing ID");
@@ -22,68 +25,69 @@ const OtherPosts = () => {
       })
       .then((data) => {
         setOtherUsersPosts(data);
-        setFilteredPosts(data);  // initialize filtered posts
+        setFilteredPosts(data);
       })
       .catch((err) => {
         console.error("Error fetching other users' posts", err);
-        setOtherUsersPosts([]); // ריקון נתונים במקרה של כשל
-        setFilteredPosts([]);  // ריקון filtered posts במקרה של כשל
+        setOtherUsersPosts([]);
+        setFilteredPosts([]);
       });
   }, []);
 
-  // סינון הפוסטים לפי חיפוש
   useEffect(() => {
     const filtered = otherUsersPosts.filter(
       (post) =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.body.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredPosts(filtered);
   }, [searchQuery, otherUsersPosts]);
 
-  const handleSelectPost = (post) => {
-    setSelectedPost(post); // לבחור פוסט
+  const goToMyPosts = () => {
+    navigate("./posts");
+  };
+
+  const goToHome = () => {
+    navigate("/home");
   };
 
   return (
     <div className="container">
-      <div>
-      <h2 >פוסטים של משתמשים אחרים</h2>
+      {/* כפתור Home */}
+      <button className="homeBtn" onClick={goToHome}>Home</button>
 
-        
-        {/* שדה חיפוש */}
-        <input 
-          type="text" 
-          placeholder="חפש פוסט..." 
-          value={searchQuery} 
-          onChange={(e) => setSearchQuery(e.target.value)} 
-        />
-        
-        {filteredPosts.length === 0 ? (
-          <p>לא נמצאו פוסטים התואמים לחיפוש</p>
-        ) : (
-          <ul>
-            {filteredPosts.map((post) => (
-              <li key={post.id}>
-                <button onClick={() => handleSelectPost(post)}>
-                  {post.id}: {post.title}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <h2>פוסטים של משתמשים אחרים</h2>
+      <button className="otherBtn" onClick={goToMyPosts}>פוסטים שלי </button>
+      <input
+        type="text"
+        placeholder="חפש פוסט..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
-      {/* הצגת פרטי הפוסט הנבחר בצד ימין */}
+      {filteredPosts.length === 0 ? (
+        <p>לא נמצאו פוסטים התואמים לחיפוש</p>
+      ) : (
+        <ul>
+          {filteredPosts.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+              selectedPost={selectedPost}
+              setSelectedPost={setSelectedPost}
+              posts={filteredPosts}
+              setPosts={setFilteredPosts}
+              currentUser={currentUser}
+              allowEditDelete={false} // למנוע אפשרות עריכה ומחיקה
+            />
+          ))}
+        </ul>
+      )}
+
       {selectedPost && (
-        <div className={`otherPost-details ${selectedPost ? "open" : ""}`}>
+        <div className="otherPost-details">
           <h3>{selectedPost.title}</h3>
           <p>{selectedPost.body}</p>
-          {/* הצגת התגובות */}
-          <Comments
-            postId={selectedPost.id}
-            currentUser={currentUser}
-          />
         </div>
       )}
     </div>

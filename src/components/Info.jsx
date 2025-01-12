@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import '../style/infoStyle.css';
 
 const Info = () => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // שליפת המשתמש מ-localStorage
@@ -18,12 +20,19 @@ const Info = () => {
     }
   }, []);
 
+  const goToHome = () => {
+    navigate("/home");
+  };
+
   if (!user) {
     return <div className="info-container">לא נמצא מידע על המשתמש.</div>;
   }
 
   return (
     <div className="info-container">
+      {/* כפתור Home */}
+      <button className="homeBtn" onClick={goToHome}>Home</button>
+
       <h1 className="info-title">פרטי המשתמש</h1>
       <ul className="info-list">
         <li><strong>מזהה:</strong> {user.id}</li>

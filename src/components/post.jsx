@@ -1,74 +1,90 @@
 import React, { useState } from "react";
 import Comments from "./comments";
 
-const Post = ({ post, selectedPost, setSelectedPost, posts, setPosts, currentUser }) => {
-    const [isEditingPost, setIsEditingPost] = useState(false);
-    const [newPost, setNewPost] = useState({ title: "", body: "" });
-  
-    const handleEditPost = () => {
-      const updatedPost = { ...selectedPost, title: newPost.title, body: newPost.body };
-      fetch(`http://localhost:3001/posts/${selectedPost.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedPost),
+import "../style/postStyle.css";
+
+const Post = (data) => {
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const [newPost, setNewPost] = useState({ title: "", body: "" });
+
+  // טיפול בעריכת פוסט
+  const handleEditPost = () => {
+    const updatedPost = { ...data.selectedPost, title: newPost.title, body: newPost.body };
+    fetch(`http://localhost:3001/posts/${data.selectedPost.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedPost),
+    })
+      .then((res) => (res.ok ? res.json() : Promise.reject("Failed to update post")))
+      .then((updatedPostData) => {
+        data.setPosts(data.posts.map((p) => (p.id === updatedPostData.id ? updatedPostData : p)));
+        data.setSelectedPost(updatedPostData);
+        setIsEditingPost(false);
       })
-        .then((res) => (res.ok ? res.json() : Promise.reject("Failed to update post")))
-        .then((updatedPostData) => {
-          setPosts(posts.map((p) => (p.id === updatedPostData.id ? updatedPostData : p)));
-          setSelectedPost(updatedPostData);
-          setIsEditingPost(false);
-        })
-        .catch((err) => console.error("Error editing post", err));
-    };
-  
-    const handleDeletePost = () => {
-      fetch(`http://localhost:3001/posts/${post.id}`, { method: "DELETE" })
-        .then(() => {
-          setPosts(posts.filter((p) => p.id !== post.id));
-          setSelectedPost(null);
-        })
-        .catch((err) => console.error("Error deleting post", err));
-    };
-  
-    return (
-      <li>
-        <button onClick={() => setSelectedPost(post)}>
-          {post.id}: {post.title}
-        </button>
-        {post.id === selectedPost?.id && (
-          <div>
-            <button onClick={() => setIsEditingPost(true)}>ערוך</button>
-            <button onClick={handleDeletePost}>מחק</button>
-            {isEditingPost ? (
-              <>
-                <input
-                  type="text"
-                  value={newPost.title || post.title}
-                  onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                />
-                <textarea
-                  value={newPost.body || post.body}
-                  onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
-                />
-                <button onClick={handleEditPost}>שמור שינויים</button>
-                <button onClick={() => setIsEditingPost(false)}>בטל עריכה</button>
-              </>
-            ) : (
-              <div className="selected-post">
-                <p>
-                  <strong>כותרת:</strong> {post.title}
-                </p>
-                <p>
-                  <strong>תוכן:</strong> {post.body}
-                </p>
-                <Comments postId={post.id} currentUser={currentUser} />
-              </div>
-            )}
-          </div>
-        )}
-      </li>
-    );
+      .catch((err) => console.error("Error editing post", err));
   };
-  
-  export default Post;
-  
+
+  // טיפול במחק פוסט
+  const handleDeletePost = () => {
+    fetch(`http://localhost:3001/posts/${data.selectedPost.id}`, { method: "DELETE" })
+      .then(() => {
+        data.setPosts(data.posts.filter((p) => p.id !== data.selectedPost.id));
+        data.setSelectedPost(null);
+      })
+      .catch((err) => console.error("Error deleting post", err));
+  };
+
+  // טיפול בלחיצה על פוסט
+  const handlePostClick = () => {
+    if (data.selectedPost?.id === data.post.id) {
+      data.setSelectedPost(null); // אם הפוסט שנבחר הוא הפוסט הנוכחי, נסגור אותו
+    } else {
+      data.setSelectedPost(data.post); // אחרת נבחר את הפוסט הנוכחי
+    }
+  };
+
+  return (
+    <li>
+      <button onClick={handlePostClick}>
+        {data.post.id}: {data.post.title}
+      </button>
+      {data.selectedPost?.id === data.post.id && (
+        <div>
+          {data.allowEditDelete && (
+            <>
+              <button className="deleteEditBtn" onClick={() => setIsEditingPost(true)}>ערוך</button>
+              <button className="deleteEditBtn" onClick={handleDeletePost}>מחק</button>
+            </>
+          )}
+          {isEditingPost ? (
+            <>
+              <input
+                type="text"
+                value={newPost.title || data.post.title}
+                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+              />
+              <textarea
+                value={newPost.body || data.post.body}
+                onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
+              />
+              <button onClick={handleEditPost}>שמור שינויים</button>
+              <button onClick={() => setIsEditingPost(false)}>בטל עריכה</button>
+            </>
+          ) : (
+            <div className="selected-post">
+              <p>
+                <strong>כותרת:</strong> {data.post.title}
+              </p>
+              <p>
+                <strong>תוכן:</strong> {data.post.body}
+              </p>
+              <Comments postId={data.post.id} currentUser={data.currentUser} />
+            </div>
+          )}
+        </div>
+      )}
+    </li>
+  );
+};
+
+export default Post;
