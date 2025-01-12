@@ -11,7 +11,7 @@ const OtherPosts = () => {
   const navigate = useNavigate();
 
   const currentUser = JSON.parse(localStorage.getItem("user"));
-
+  
   useEffect(() => {
     if (!currentUser?.id) {
       console.error("User not logged in or missing ID");

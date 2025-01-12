@@ -62,14 +62,9 @@ const Posts = () => {
       .catch((err) => console.error("Error fetching last post", err));
   };
 
-  const goToOtherPosts = () => {
-    navigate("./otherPosts");
-  };
-
-
+  
   return (
     <div className="container">
-      {/* כפתור Home */}
       <button className="homeBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/home`)}>Home</button>
 
 
