@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/logIn";
 import Register from "./components/register";
 import FullInfo from "./components/fullInfo";
@@ -15,19 +15,20 @@ function App() {
     <UserContextProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* דף ההתחברות הראשי */}
+          <Route index element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/fullinfo" element={<FullInfo />} />
-          {/* נתיב עמוד הבית */}
-          <Route path="/home" element={<Home />}>
-            <Route path="posts" element={<Posts />} />
-            <Route path="todos" element={<Todos />} />
-            <Route path="albums" element={<Albums />} />
-            <Route path="info" element={<Info />} />
-          </Route>
+          <Route path="/full-registration" element={<FullInfo />} />
 
-          <Route path="otherPosts" element={<OtherPosts />} />
+          {/* דף הבית ונתיבים מקוננים */}
+          <Route path="/:user/:id/home" element={<Home />}>
+            <Route path="info" element={<Info />} />
+            <Route path="todos" element={<Todos />} />
+            <Route path="posts" element={<Posts />} />
+            <Route path="albums" element={<Albums />} />
+            <Route path="otherPosts" element={<OtherPosts />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </UserContextProvider>

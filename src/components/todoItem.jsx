@@ -63,14 +63,27 @@ const TodoItem = ({ todo, index, setTodos, setFilteredTodos }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(editingTodo),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
-        setIsEditing(false);
+        // עדכון המצב כך שה-React ירנדר מחדש
+        setTodos((prevTodos) =>
+          prevTodos.map((t) => (t.id === data.id ? data : t))
+        );
+        setFilteredTodos((prevFilteredTodos) =>
+          prevFilteredTodos.map((t) => (t.id === data.id ? data : t))
+        );
+        setIsEditing(false); // סיום מצב העריכה
       })
       .catch((error) => {
         console.error('Error updating todo:', error);
       });
   };
+  
 
   return (
     <li className="todo-item">

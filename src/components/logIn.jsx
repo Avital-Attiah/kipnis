@@ -10,21 +10,22 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // קריאה לפונקציה עם העברת navigate ו-setError כפרמטרים
+
+    // קריאה לפונקציה שבודקת אם המשתמש קיים
     var existUser = await userExist(username, password, setError);
     if (existUser) {
-      // מחיקת המשתמש הקודם והוספת החדש
-    //  localStorage.removeItem("user"); // אופציונלי - מסיר את המפתח הקודם
-      localStorage.setItem("user", JSON.stringify(existUser[0])); // מוסיף את המשתמש החדש
-      navigate("/home");
+      // שמירת פרטי המשתמש בלוקאל סטורג'
+      localStorage.setItem("user", JSON.stringify(existUser[0]));
+
+      // ניווט לנתיב הדינמי על בסיס שם המשתמש וה-ID
+      navigate(`/${existUser[0].username}/${existUser[0].id}/home`);
     } else {
+      // הודעת שגיאה אם המשתמש לא נמצא
       setError("שם משתמש או סיסמה שגויים!");
     }
   };
-  
 
   const handleRegisterClick = () => {
     navigate("/register");

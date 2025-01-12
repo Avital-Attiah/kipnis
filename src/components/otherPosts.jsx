@@ -43,21 +43,15 @@ const OtherPosts = () => {
     setFilteredPosts(filtered);
   }, [searchQuery, otherUsersPosts]);
 
-  const goToMyPosts = () => {
-    navigate("./posts");
-  };
-
-  const goToHome = () => {
-    navigate("/home");
-  };
+  
+ 
 
   return (
     <div className="container">
       {/* כפתור Home */}
-      <button className="homeBtn" onClick={goToHome}>Home</button>
+      <button className="homeBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/home`)}>Home</button>
 
       <h2>פוסטים של משתמשים אחרים</h2>
-      <button className="otherBtn" onClick={goToMyPosts}>פוסטים שלי </button>
       <input
         type="text"
         placeholder="חפש פוסט..."

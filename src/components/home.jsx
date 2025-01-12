@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link, Outlet } from "react-router-dom";
-
-import '../style/homeStyle.css';
+import { useNavigate, Outlet } from "react-router-dom";
+import "../style/homeStyle.css";
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -12,9 +11,9 @@ const Home = () => {
 
     if (storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser); // פריסה ישירה של האובייקט
-        setUser(parsedUser);
-        console.log("User set successfully:", parsedUser);
+        const currentUser = JSON.parse(storedUser);
+        setUser(currentUser);
+        console.log("User set successfully:", currentUser);
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
         setUser(null);
@@ -34,17 +33,17 @@ const Home = () => {
     <div className="home-container">
       <h1 className="home-title">עמוד הבית</h1>
       {user && <h2 className="home-user-greeting">שלום {user.username}!</h2>}
-      
-      {/* כפתורים לניווט */}
-      <nav className="navigation">
-        <Link to="info" className="nav-link">Info</Link> | 
-        <Link to="todos" className="nav-link">Todos</Link> | 
-        <Link to="posts" className="nav-link">Posts</Link> | 
-        <Link to="albums" className="nav-link">Albums</Link> | 
-        <button onClick={handleLogout} className="logout-button">Logout</button>
-      </nav>
 
-      {/* הצגת תוכן בהתאם לניווט */}
+      {/* כפתורי הניווט */}
+      <div className="navigation">
+        <button className="nav-link"  onClick={() => navigate(`/${user?.username}/${user?.id}/home/info`)}>Info</button>
+        <button className="nav-link" onClick={() => navigate(`/${user?.username}/${user?.id}/home/todos`)}>Todos</button>
+        <button className="nav-link" onClick={() => navigate(`/${user?.username}/${user?.id}/home/posts`)}>Posts</button>
+        <button className="nav-link" onClick={() => navigate(`/${user?.username}/${user?.id}/home/albums`)}>Albums</button>
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
+      </div>
+
+      {/* אזור התוכן המוצג */}
       <Outlet />
     </div>
   );
