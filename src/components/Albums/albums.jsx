@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Album from "./album";
 import "../../style/albumStyle.css";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../UserContext";
 
 const Albums = () => {
   const [albums, setAlbums] = useState([]);
@@ -10,8 +11,7 @@ const Albums = () => {
   const [newAlbumTitle, setNewAlbumTitle] = useState("");
   const navigate = useNavigate();
 
-
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const { user: currentUser } = useUser(); // קבלת המשתמש מה-Context
   const userId = currentUser.id;
 
   useEffect(() => {

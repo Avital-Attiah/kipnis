@@ -1,27 +1,14 @@
 import { useEffect, useState } from "react"; 
 import { useNavigate, Outlet } from "react-router-dom"; 
 import "../style/homeStyle.css"; 
+import { useUser } from "../UserContext";
 
 const Home = () => {
-  const [user, setUser] = useState(null); // הגדרת מצב למשתמש
+  const { user } = useUser();
+ // const [user, setUser] = useState(null); // הגדרת מצב למשתמש
   const navigate = useNavigate(); 
  
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user"); 
-    if (storedUser) {
-      try {
-        const currentUser = JSON.parse(storedUser); // ניתוח המידע שנשמר
-        setUser(currentUser); // עדכון המצב עם פרטי המשתמש
-        console.log("User set successfully:", currentUser); // הצגת הודעה אם הצליח
-      } catch (error) {
-        console.error("Failed to parse user from localStorage:", error); // הודעה אם ניתוח המידע נכשל
-        setUser(null); // איפוס המצב במקרה של שגיאה
-      }
-    } else {
-      console.warn("No user found in localStorage. Redirecting to login.");
-      navigate("/login"); // מעבר לדף ההתחברות
-    }
-  }, []); 
+  
 
   const handleLogout = () => {
     localStorage.removeItem("user"); // הסרת המידע על המשתמש מ-localStorage

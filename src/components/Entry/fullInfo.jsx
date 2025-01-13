@@ -1,13 +1,14 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../UserContext";
-import '../../style/fullInfoStyle.css'; // Import the CSS file
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import "../../style/fullInfoStyle.css";
 
 function FullInfo() {
-  const { userData } = useContext(UserContext);
+  const location = useLocation();
+  const { username, password } = location.state || {}; // Extract data from state
   const [formData, setFormData] = useState({
     name: "",
-    username: userData.username,
+    username: username || "",
     email: "",
     address: {
       street: "",
@@ -20,7 +21,7 @@ function FullInfo() {
       },
     },
     phone: "",
-    website: userData.password,
+    website: password || "",
     company: {
       name: "",
       catchPhrase: "",
@@ -106,123 +107,7 @@ function FullInfo() {
 
   return (
     <div className="full-info-container">
-      <h1 className="full-info-title">Full Information</h1>
-      <form onSubmit={handleSubmit} className="full-info-form">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="address.street"
-          placeholder="Street"
-          value={formData.address.street}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="address.suite"
-          placeholder="Suite"
-          value={formData.address.suite}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="address.city"
-          placeholder="City"
-          value={formData.address.city}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="address.zipcode"
-          placeholder="Zipcode"
-          value={formData.address.zipcode}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="address.geo.lat"
-          placeholder="Latitude"
-          value={formData.address.geo.lat}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="address.geo.lng"
-          placeholder="Longitude"
-          value={formData.address.geo.lng}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="company.name"
-          placeholder="Company Name"
-          value={formData.company.name}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="company.catchPhrase"
-          placeholder="Catch Phrase"
-          value={formData.company.catchPhrase}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <input
-          type="text"
-          name="company.bs"
-          placeholder="Business Slogan"
-          value={formData.company.bs}
-          onChange={handleChange}
-          className="full-info-input"
-          required
-        />
-        <button type="submit" className="full-info-button">
-          Submit
-        </button>
-      </form>
-
-      {error && <div className="full-info-error">{error}</div>}
-      {success && <div className="full-info-success">{success}</div>}
+      {/* שאר הקוד */}
     </div>
   );
 }

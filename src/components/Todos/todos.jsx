@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TodoItem from './todoItem'; 
 import '../../style/todoStyle.css';
+import { useUser } from "../../UserContext";
 
 const Todos = () => {
   const [todos, setTodos] = useState([]);
@@ -12,7 +13,7 @@ const Todos = () => {
 
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const { user: currentUser } = useUser(); // קבלת המשתמש מה-Context
   const userId = currentUser.id;
 
   useEffect(() => {

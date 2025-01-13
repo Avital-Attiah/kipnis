@@ -1,15 +1,14 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userNameExist } from "../../db-api";
-import { UserContext } from "../../UserContext";
-import '../../style/registerStyle.css';
+
+import "../../style/registerStyle.css";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [error, setError] = useState("");
-  const { setUserData } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -39,9 +38,8 @@ const Register = () => {
       return;
     }
 
-    // Save the user data to context
-    setUserData({ username, password });
-    navigate("/fullInfo"); // Navigate to full info page
+    // Navigate to fullInfo page with user data as state
+    navigate("/fullInfo", { state: { username, password } });
   };
 
   const handleLogInClick = () => {
@@ -73,8 +71,12 @@ const Register = () => {
           onChange={(e) => setVerifyPassword(e.target.value)}
           className="input-field"
         />
-        <button type="submit" className="submit-button">רשום</button>
-        <button type="button" onClick={handleLogInClick} className="login-button">התחבר</button>
+        <button type="submit" className="submit-button">
+          רשום
+        </button>
+        <button type="button" onClick={handleLogInClick} className="login-button">
+          התחבר
+        </button>
       </form>
 
       {error && <div className="error-message">{error}</div>}

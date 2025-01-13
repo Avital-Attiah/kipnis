@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../style/postStyle.css";
-import Post from "./post"
+import Post from "./post";
+import { useUser } from "../../UserContext";
 
 const Posts = () => {
+  const { user: currentUser } = useUser(); // קבלת המשתמש מה-Context
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [newPost, setNewPost] = useState({ title: "", body: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(localStorage.getItem("user"));
-
   useEffect(() => {
     if (!currentUser) {
-      console.error("No user found in localStorage. Redirecting to login.");
+      console.error("No user found in context. Redirecting to login.");
       navigate("/login");
       return;
     }
@@ -37,7 +37,6 @@ const Posts = () => {
     : posts;
 
   const handleAddPost = () => {
-    // שלח בקשה לקבלת הפוסטים האחרונים כדי לדעת מה ה-ID האחרון
     fetch("http://localhost:3001/posts")
       .then((res) => res.json())
       .then((data) => {
@@ -45,7 +44,7 @@ const Posts = () => {
         const post = {
           ...newPost,
           userId: currentUser.id,
-          id: lastPostId + 1, // הגדר את ה-ID החדש כ-ID האחרון + 1
+          id: lastPostId + 1,
         };
 
         fetch("http://localhost:3001/posts", {
@@ -57,16 +56,21 @@ const Posts = () => {
           .then((data) => setPosts([...posts, data]))
           .catch((err) => console.error("Error adding post", err));
 
-        setNewPost({ title: "", body: "" }); // אתחל את השדות אחרי ההוספה
+        setNewPost({ title: "", body: "" });
       })
       .catch((err) => console.error("Error fetching last post", err));
   };
 
-  
   return (
     <div className="container">
-      <button className="homeBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/home`)}>Home</button>
-
+      <button
+        className="homeBtn"
+        onClick={() =>
+          navigate(`/${currentUser?.username}/${currentUser?.id}/home`)
+        }
+      >
+        Home
+      </button>
 
       <div className="add-post">
         <h2>הוסף פוסט חדש</h2>
@@ -81,10 +85,17 @@ const Posts = () => {
           value={newPost.body}
           onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
         />
-        <button onClick={handleAddPost} className="addPostBtn">הוסף פוסט</button>
+        <button onClick={handleAddPost} className="addPostBtn">
+          הוסף פוסט
+        </button>
       </div>
 
-      <button className="otherBtn" onClick={() =>navigate(`/${currentUser.username}/${currentUser.id}/otherPosts`)}>
+      <button
+        className="otherBtn"
+        onClick={() =>
+          navigate(`/${currentUser?.username}/${currentUser?.id}/otherPosts`)
+        }
+      >
         פוסטים אחרים
       </button>
 

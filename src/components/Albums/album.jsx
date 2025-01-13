@@ -6,10 +6,10 @@ const Album = ({ albumId, onBack }) => {
   const [start, setStart] = useState(0);
   const [newPhoto, setNewPhoto] = useState({ title: "", url: "", thumbnailUrl: "" });
 
-  // Fetch photos for the album, only if not already fetched
+  
   useEffect(() => {
-    // Reset photos and start index only when albumId changes
-    setPhotos([]); // Clear photos when albumId changes
+    
+    setPhotos([]); 
     setStart(0);
     fetchPhotos(albumId, 0);
   }, [albumId]);

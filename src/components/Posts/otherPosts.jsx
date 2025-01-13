@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Post from "./post";
 import "../../style/otherPostStyle.css";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../UserContext";
 
 const OtherPosts = () => {
   const [otherUsersPosts, setOtherUsersPosts] = useState([]);
@@ -10,7 +11,7 @@ const OtherPosts = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const { user: currentUser } = useUser(); // קבלת המשתמש מה-Context
   
   useEffect(() => {
     if (!currentUser?.id) {

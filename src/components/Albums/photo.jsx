@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../../style/albumStyle.css";
 
 const Photo = ({ photo, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
